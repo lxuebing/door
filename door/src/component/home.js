@@ -7,7 +7,7 @@ import {
 
 const styles = StyleSheet.create({
   text: {
-    color: 'red',
+    color: 'blue',
     marginTop: 50
   },
 });
@@ -18,7 +18,7 @@ class Home extends React.Component {
   }
 
   render() {
-    return(
+    return (
       <View>
         <Text style={styles.text}>111</Text>
       </View>
