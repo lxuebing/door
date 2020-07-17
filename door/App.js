@@ -11,9 +11,7 @@ import React from 'react';
 import Home from './src/page/home';
 
 const App: () => React$Node = () => {
-  return (
-    <Home/>
-  );
+  return <Home />;
 };
 
 export default App;

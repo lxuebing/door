@@ -1,11 +1,36 @@
 module.exports = {
   root: true,
   extends: '@react-native-community',
+  parserOptions: {
+    parser: 'babel-eslint'
+  },
+  env: {
+    "jest": true,
+    "react-native/react-native": true
+  },
+  plugins: [
+    "jest",
+    "react",
+    "react-native",
+    "immutable",
+    "filenames",
+    "@scottnonnenberg/thehelp"
+  ],
+  settings: {
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".ios.js",
+          ".android.js"
+        ]
+      }
+    }
+  },
   rules: {
     /* rules below are explicitly disabled */
     "no-underscore-dangle": "off",
     "react/forbid-prop-types": "off",
-    "import/prefer-default-export": "off",
     "class-methods-use-this": "off",
     "no-use-before-define": "off",
     "no-mixed-operators": "off",
@@ -23,23 +48,6 @@ module.exports = {
     "no-undef": "warn",
     "no-param-reassign": "warn",
     "immutable/no-let": "warn",
-    "import/no-extraneous-dependencies": [
-      "error",
-      {
-        "devDependencies": [
-          "**/*.spec.js"
-        ]
-      }
-    ],
-    "import/no-unresolved": [
-      2,
-      {
-        "ignore": [
-          ".png"
-        ]
-      }
-    ],
-    "import/named": "warn",
     "consistent-return": "warn",
     "react-native/no-unused-styles": "warn",
     "react-native/no-inline-styles": "error",
@@ -112,7 +120,6 @@ module.exports = {
       }
     ],
     "camelcase": "warn",
-    "import/no-cycle": "warn",
     "no-return-assign": "error",
     "no-unused-vars": "error",
     "object-curly-newline": [
