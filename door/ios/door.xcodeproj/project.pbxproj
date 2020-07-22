@@ -161,7 +161,6 @@
 				3007E0F16F954460D734CA6D /* Pods-door-tvOSTests.debug.xcconfig */,
 				9FFDC4C14CB446C678D15E97 /* Pods-door-tvOSTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
