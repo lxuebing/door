@@ -1,7 +1,6 @@
-import React from 'react';
+import * as React from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import User from './user';
-import BottomTab from '../component/bottomTab';
 
 const styles = StyleSheet.create({
   text: {
@@ -20,7 +19,6 @@ class Home extends React.Component {
       <View>
         <Text style={styles.text}>home</Text>
         <User />
-        <BottomTab />
       </View>
     );
   }
