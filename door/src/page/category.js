@@ -119,7 +119,7 @@ class Category extends React.Component {
       <View style={styles.container}>
         <View style={styles.sidebar}>
           {  firstCates && firstCates.map((cate,index) => (
-            <TouchableHighlight onPress = { (e) => this.onFirstCateClicked(cate) }>
+            <TouchableHighlight key={index} onPress = { (e) => this.onFirstCateClicked(cate) }>
               <View style={styles.listItem}>
                 <Text style={styles.text}>{cate.name}</Text>
               </View>
@@ -129,7 +129,7 @@ class Category extends React.Component {
         
         <View style={styles.content}>
           {  secondCates && secondCates.map((cate,index) => (
-            <TouchableHighlight onPress = { (e) => this.onSecondCateClicked(cate) }>
+            <TouchableHighlight key={index} onPress = { (e) => this.onSecondCateClicked(cate) }>
               <View style={styles.categoryItem}>
                 <Image source={homePicture} style={styles.img} />
                 <Text style={styles.text}>{cate.name}</Text>
