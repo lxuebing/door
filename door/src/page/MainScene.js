@@ -16,6 +16,7 @@ import Home from './Home';
 import Category from './Category';
 import ShoppingCart from './ShoppingCart';
 import User from './User';
+import ProductList from './ProductList';
 
 const styles = StyleSheet.create({
   icon: {
@@ -64,6 +65,7 @@ export default class MainScene extends React.Component {
                 <Tab.Screen name="分类" component={Category} />
                 <Tab.Screen name="购物车" component={ShoppingCart} />
                 <Tab.Screen name="我的" component={User} />
+                <Tab.Screen name="ProductList" component={ProductList} />
               </Tab.Navigator>
             </NavigationContainer>
             

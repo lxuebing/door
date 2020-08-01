@@ -84,7 +84,8 @@ class Category extends React.Component {
 
   onSecondCateClicked(cate) {
     console.log("2级品类: " + cate.name)
-    // todo: 点击二级品类跳转至商品列表页
+    console.log("导航",this.props.navigation)
+    this.props.navigation.navigate('ProductList')
   }
 
   loadSecondCateList(cateId) {
