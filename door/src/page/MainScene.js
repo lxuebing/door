@@ -12,10 +12,10 @@ import cartSelectedIcon from '../images/icons/cartSelected.png';
 import userIcon from '../images/icons/user.png';
 import userSelectedIcon from '../images/icons/userSelected.png';
 
-import Home from '../page/home';
-import Category from '../page/category';
-import ShoppingCart from '../page/shoppingCart';
-import User from '../page/user';
+import Home from './Home';
+import Category from './Category';
+import ShoppingCart from './ShoppingCart';
+import User from './User';
 
 const styles = StyleSheet.create({
   icon: {
