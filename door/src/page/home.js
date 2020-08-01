@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {StyleSheet, View, Text, Image, Dimensions} from 'react-native';
 
-import homePicture from '../images/home.jpeg';
+// import homePicture from '../images/home.jpeg';
 import moreCategory from '../images/icons/categorySelected.png';
 
 const {width} = Dimensions.get('window');
@@ -45,18 +45,27 @@ class Home extends React.Component {
 
   componentDidMount() {
     fetch('http://mockjs.docway.net/mock/1WpkXqZLoSf/api/home/category/list')
-      .then((response) => console.log(111, response.json()))
-      .then((data) => console.log(222, data))
-      .catch((error) => console.log(error));
+      // .then((response) => console.log(111, response.json()))
+      // .then((data) => console.log(222, data))
+      // .catch((error) => console.log(error));
+      .then((response) => {
+        return response.json()
+      })
+      .then((result) => {
+        console.log(111, result)
+      })
+      .catch((error) => {
+        console.log(222, error)
+      })
   }
 
   render() {
     return (
       <View>
-        <Image source={homePicture} style={styles.img} />
+        {/* <Image source={homePicture} style={styles.img} /> */}
         <View style={styles.typeWrapper}>
           <View style={styles.typeContainer}>
-            <Image source={homePicture} style={styles.typeImg} />
+            {/* <Image source={homePicture} style={styles.typeImg} /> */}
             <Text style={styles.typeText}>1111</Text>
           </View>
           <View style={styles.typeContainer}>
