@@ -46,28 +46,14 @@ class ProductList extends React.Component {
     super(props);
     this.state = {
       productList: [
-        {
-          name:'示例产品',
-          price: 1000,
-          img: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=151472226,3497652000&fm=26&gp=0.jpg'
-        },
-        {
-          name:'示例产品',
-          price: 1000,
-          img: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=151472226,3497652000&fm=26&gp=0.jpg'
-        },
-        {
-          name:'示例产品',
-          price: 1000,
-          img: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=151472226,3497652000&fm=26&gp=0.jpg'
-        }
+        
       ]
     };
   }
 
   onItemClicked(item) {
     console.log("选择产品: " + item.name)
-    // todo: 点击二级品类跳转至商品列表页
+    this.props.navigation.navigate('Product')
   }
 
   loadMore() {
@@ -75,13 +61,19 @@ class ProductList extends React.Component {
   }
 
   componentDidMount() {
-    fetch('http://mockjs.docway.net/mock/1WpkXqZLoSf/api/category/list?root=0')
+    fetch('http://mockjs.docway.net/mock/1WpkXqZLoSf/api/product/list')
       .then((response) => {
         return response.json()
       })
       .then((res) => {
-        console.log("一级品类", res)
-        
+        console.log("商品列表", res)
+        if(res.code == 1) {
+          this.setState({
+            productList: res.data
+          })
+        } else {
+          // todo: 报错
+        }
       })
       .catch((error) => {
         console.log("error: ", error)
