@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Image, ImageBackground, Text, TouchableHighlight} from 'react-native';
+import {DeviceEventEmitter, StyleSheet, View, Image, ImageBackground, Text, TouchableHighlight} from 'react-native';
 import avatar from '../images/images/avatar.jpg';
 
 const styles = StyleSheet.create({
@@ -52,12 +52,20 @@ class User extends React.Component {
         nickname: '张三',
         role: 1
       },
-      mode: '客户模式'
+      mode: 1
     };
   }
 
   onMenuSelected(menu) {
     console.log('选中菜单：', menu.name)
+  }
+
+  switchMode() {
+    console.log("change mode")
+    this.setState({
+      mode: (this.state.mode + 1) % 2
+    })
+    DeviceEventEmitter.emit('switchMode', {})
   }
 
   render() {
@@ -72,7 +80,12 @@ class User extends React.Component {
             <Text style={styles.text}>{userInfo.username}</Text>
             {
               userInfo.role == 1 &&
-              <Text style={styles.linkButton}>{mode}</Text>
+              <>
+                <Text>客户模式</Text>
+                <TouchableHighlight onPress={ (e) => this.switchMode() }>
+                  <Text style={styles.linkButton}>切换至管理模式</Text>
+                </TouchableHighlight>
+              </>
             }
             
           </View>
