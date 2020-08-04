@@ -12,10 +12,10 @@ import cartSelectedIcon from '../images/icons/cartSelected.png';
 import userIcon from '../images/icons/user.png';
 import userSelectedIcon from '../images/icons/userSelected.png';
 
-import Home from './Home';
-import Category from './Category';
-import ShoppingCart from './ShoppingCart';
-import User from './User';
+import ProductMng from './ProductMng';
+import CategoryMng from './CategoryMng';
+import OrderMng from './OrderMng';
+import UserMng from './UserMng';
 
 const styles = StyleSheet.create({
   icon: {
@@ -48,13 +48,7 @@ export default class ManageScene extends React.Component {
 
     render() {
         return (
-          <>
-            <Text>管理模式</Text>
-            <TouchableHighlight onPress={ (e) => this.switchMode() }>
-              <Text style={styles.linkButton}>切换至客户模式</Text>
-            </TouchableHighlight>
-      
-            {/* <NavigationContainer>
+            <NavigationContainer>
               <Tab.Navigator
                 screenOptions={({route}) => ({
                   // eslint-disable-next-line react/prop-types
@@ -77,14 +71,12 @@ export default class ManageScene extends React.Component {
                   activeTintColor: '#5695D7',
                   inactiveTintColor: '#000',
                 }}>
-                <Tab.Screen name="首页" component={Home} />
-                <Tab.Screen name="分类" component={Category} />
-                <Tab.Screen name="购物车" component={ShoppingCart} />
-                <Tab.Screen name="我的" component={User} />
+                <Tab.Screen name="商品管理" component={ProductMng} />
+                <Tab.Screen name="品类管理" component={CategoryMng} />
+                <Tab.Screen name="订单管理" component={OrderMng} />
+                <Tab.Screen name="我的" component={UserMng} />
               </Tab.Navigator>
-            </NavigationContainer> */}
-
-            </>
+            </NavigationContainer> 
           )
     }
   
