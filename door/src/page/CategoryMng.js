@@ -1,6 +1,7 @@
 import React from 'react';
-import {StyleSheet, View, Text, Image, TouchableHighlight, Dimensions} from 'react-native';
+import {StyleSheet, View, Text, Button, Image, TextInput, TouchableHighlight, Dimensions} from 'react-native';
 import homePicture from '../images/icons/home.png';
+import TreeView from './component/TreeView'
 
 const styles = StyleSheet.create({
   text: {
@@ -12,9 +13,14 @@ const styles = StyleSheet.create({
   editPanel: {
     width: Dimensions.get('window').width,
     backgroundColor: 'white',
-    height: 150,
     borderBottomWidth: 1,
     borderBottomColor: 'gray'
+  },
+  formRow: {
+    height: 'auto',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   categoryTree: {
     
@@ -25,71 +31,24 @@ class CategoryMng extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      firstCates: [
-      ],
       categoryTree: [
-        {
-          id: 1,
-          name: "品类1",
-          shortcut: "",
-        },
-        {
-          id: 2,
-          name: "品类2",
-          shortcut: "",
-        },
-        {
-          id: 3,
-          name: "品类3",
-          shortcut: "",
-        },
-        {
-          id: 4,
-          name: "品类4",
-          shortcut: "",
-        },
-        {
-          id: 5,
-          name: "品类5",
-          shortcut: "",
-        },
-        {
-          id: 6,
-          name: "品类6",
-          shortcut: "",
-        }
+        
       ]
     };
   }
 
-  onFirstCateClicked(cate) {
-    console.log("1级品类: " + cate.id + cate.name)
-    // todo: 点击一级品类加载该品类下的二级品类
-  }
-
-  onSecondCateClicked(cate) {
-    console.log("2级品类: " + cate.name)
-    console.log("导航",this.props.navigation)
-    this.props.navigation.navigate('ProductList')
-  }
-
-  loadSecondCateList(cateId) {
-    // todo: 加载二级品类
-  }
-
   componentDidMount() {
-    fetch('http://mockjs.docway.net/mock/1WpkXqZLoSf/api/category/list?root=0')
+    fetch('http://mockjs.docway.net/mock/1WpkXqZLoSf/api/category/all')
       .then((response) => {
         return response.json()
       })
       .then((res) => {
-        console.log("一级品类", res)
+        console.log("品类树", res)
         if(res.code === 1) {
           let cates = res.data
           this.setState({
-            firstCates: cates
+            categoryTree: cates
           })
-          if(cates && cates.length > 0) this.loadSecondCateList(cates[0].id)
         } else {
           // todo: token错误提示
         }
@@ -99,16 +58,45 @@ class CategoryMng extends React.Component {
       })
   }
 
+  onItemClick(item) {
+    console.log("选中品类：", item)
+    item.isOpen = !item.isOpen
+    this.setState({
+        test: 0,
+    })
+  }
+
+  onSave() {
+    console.log("快速添加")
+  }
+
   render() {
     let {categoryTree} = this.state
     return (
       <View style={styles.container}>
         <View style={styles.editPanel}>
-          <Text>品类编辑/添加</Text>
+          <View style={styles.formRow}>
+            <Text>品类名称：</Text>
+            <TextInput placeholder={"请输入品类名称"}/>
+          </View>
+          <View style={styles.formRow}>
+            <Text>上级品类：</Text>
+            <TextInput placeholder={"请选择上级品类"}/>
+          </View>
+          <View style={styles.formRow}>
+            <Text>品类图标：</Text>
+          </View>
+          <View style={styles.formRow}>
+            <Button title={'快速添加'} onPress={this.onSave}/>
+          </View>
         </View>
         
         <View style={styles.categoryTree}>
-          <Text>TreeView</Text>
+          <TreeView
+            data={categoryTree}
+            onItemClick={(item) => this.onItemClick(item)}
+            titleKey={'name'}
+          />
         </View>
       </View>
     );
