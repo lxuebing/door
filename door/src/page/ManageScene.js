@@ -16,6 +16,7 @@ import ProductMng from './ProductMng';
 import CategoryMng from './CategoryMng';
 import OrderMng from './OrderMng';
 import UserMng from './UserMng';
+import ProductEdit from './ProductEdit';
 
 const styles = StyleSheet.create({
   icon: {
@@ -75,6 +76,7 @@ export default class ManageScene extends React.Component {
                 <Tab.Screen name="品类管理" component={CategoryMng} />
                 <Tab.Screen name="订单管理" component={OrderMng} />
                 <Tab.Screen name="我的" component={UserMng} />
+                <Tab.Screen name="ProductEdit" component={ProductEdit} />
               </Tab.Navigator>
             </NavigationContainer> 
           )

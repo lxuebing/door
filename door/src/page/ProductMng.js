@@ -45,7 +45,7 @@ class ProductMng extends React.Component {
   }
 
   onItemClicked(item) {
-    console.log("选择产品: " + item.name)
+    this.props.navigation.navigate('ProductEdit')
   }
 
   onAdd() {
