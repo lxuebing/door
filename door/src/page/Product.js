@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, View, Image, Button, Text, TouchableHighlight} from 'react-native';
 import Swiper from 'react-native-swiper';
+import {host} from '../constants/config'
 
 import cartIcon from '../images/icons/cart.png';
 
@@ -56,18 +57,21 @@ class Product extends React.Component {
   }
 
   componentDidMount() {
-    fetch('http://mockjs.docway.net/mock/1WpkXqZLoSf/api/product/detail')
+    let {productId} = this.props.route.params
+    console.log(productId)
+    fetch(host + '/api/product/detail?id=' + productId)
       .then((response) => {
         return response.json()
       })
       .then((res) => {
         console.log("商品详情", res)
-        if(res.code == 1) {
+        if(res.code == 0) {
           this.setState({
             product: res.data
           })
         } else {
           // todo: 报错
+          console.log("获取商品失败：", res.msg)
         }
       })
       .catch((error) => {

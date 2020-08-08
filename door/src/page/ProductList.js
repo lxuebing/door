@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, Text, Image, Button, TouchableHighlight, Dimensions} from 'react-native';
+import {host} from '../constants/config'
 
 const styles = StyleSheet.create({
   text: {
@@ -53,38 +54,47 @@ class ProductList extends React.Component {
 
   onItemClicked(item) {
     console.log("选择产品: " + item.name)
-    this.props.navigation.navigate('Product')
+    this.props.navigation.navigate('Product', {productId: item.id})
   }
 
   loadMore() {
-    // todo: 滑动至底部时加载下一页
-  }
-
-  componentDidMount() {
-    fetch('http://mockjs.docway.net/mock/1WpkXqZLoSf/api/product/list')
+    let {productList} = this.state
+    let query = "?limit=10"
+    if(this.props.route && this.props.route.params) {
+      let {category} = this.props.route.params
+      query = query + "&category=" + category
+    }
+    if(productList && productList.length > 0) {
+      query = query + "&startId=" + productList[productList.length-1].id
+    }
+    fetch(host + '/api/product/list' + query)
       .then((response) => {
         return response.json()
       })
       .then((res) => {
         console.log("商品列表", res)
-        if(res.code == 1) {
+        if(res.code == 0) {
           this.setState({
-            productList: res.data
+            productList: productList.concat(res.data)
           })
         } else {
           // todo: 报错
+          console.log("错误:", res.msg)
         }
       })
       .catch((error) => {
         console.log("error: ", error)
       }
     )
-    console.log("导航", this.props.navigation)
+  }
+
+  componentDidMount() {
+    console.log("刷新页面")
+    this.loadMore()
   }
 
   render() {
     let {productList} = this.state
-    let navigation = this.props.navigation
     return (
       <View style={styles.container}>
         {/* <Button 

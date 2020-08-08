@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, Text, Image, TouchableHighlight, Dimensions} from 'react-native';
-import homePicture from '../images/icons/home.png';
+import {host} from '../constants/config'
 
 const styles = StyleSheet.create({
   text: {
@@ -43,70 +43,55 @@ class Category extends React.Component {
       firstCates: [
       ],
       secondCates: [
-        {
-          id: 1,
-          name: "品类1",
-          shortcut: "",
-        },
-        {
-          id: 2,
-          name: "品类2",
-          shortcut: "",
-        },
-        {
-          id: 3,
-          name: "品类3",
-          shortcut: "",
-        },
-        {
-          id: 4,
-          name: "品类4",
-          shortcut: "",
-        },
-        {
-          id: 5,
-          name: "品类5",
-          shortcut: "",
-        },
-        {
-          id: 6,
-          name: "品类6",
-          shortcut: "",
-        }
       ]
     };
-  }
-
-  onFirstCateClicked(cate) {
-    console.log("1级品类: " + cate.id + cate.name)
-    // todo: 点击一级品类加载该品类下的二级品类
   }
 
   onSecondCateClicked(cate) {
     console.log("2级品类: " + cate.name)
     console.log("导航",this.props.navigation)
-    this.props.navigation.navigate('ProductList')
+    this.props.navigation.navigate('ProductList', {category: cate.id})
   }
 
-  loadSecondCateList(cateId) {
-    // todo: 加载二级品类
+  loadSecondCateList(cate) {
+    console.log("1级品类: " + cate.id + cate.name)
+    fetch(host + '/api/category/list?root=' + cate.id)
+      .then((response) => {
+        return response.json()
+      })
+      .then((res) => {
+        console.log("加载二级品类", res)
+        if(res.code === 0) {
+          let cates = res.data
+          this.setState({
+            secondCates: cates
+          })
+        } else {
+          // todo: token错误提示
+          console.log("错误")
+        }
+      })
+      .catch((error) => {
+        console.log(222, error)
+      })
   }
 
   componentDidMount() {
-    fetch('http://mockjs.docway.net/mock/1WpkXqZLoSf/api/category/list?root=0')
+    fetch(host + '/api/category/list?root=0')
       .then((response) => {
         return response.json()
       })
       .then((res) => {
         console.log("一级品类", res)
-        if(res.code === 1) {
+        if(res.code === 0) {
           let cates = res.data
           this.setState({
             firstCates: cates
           })
-          if(cates && cates.length > 0) this.loadSecondCateList(cates[0].id)
+          if(cates && cates.length > 0) this.loadSecondCateList(cates[0])
         } else {
           // todo: token错误提示
+          console.log("错误")
         }
       })
       .catch((error) => {
@@ -120,7 +105,7 @@ class Category extends React.Component {
       <View style={styles.container}>
         <View style={styles.sidebar}>
           {  firstCates && firstCates.map((cate,index) => (
-            <TouchableHighlight key={index} onPress = { (e) => this.onFirstCateClicked(cate) }>
+            <TouchableHighlight key={index} onPress = { (e) => this.loadSecondCateList(cate) }>
               <View style={styles.listItem}>
                 <Text style={styles.text}>{cate.name}</Text>
               </View>
@@ -132,7 +117,7 @@ class Category extends React.Component {
           {  secondCates && secondCates.map((cate,index) => (
             <TouchableHighlight key={index} onPress = { (e) => this.onSecondCateClicked(cate) }>
               <View style={styles.categoryItem}>
-                <Image source={homePicture} style={styles.img} />
+                <Image source={{uri:cate.shortcut}} style={styles.img} />
                 <Text style={styles.text}>{cate.name}</Text>
               </View>
             </TouchableHighlight>
