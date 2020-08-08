@@ -50,6 +50,7 @@ class ProductMng extends React.Component {
 
   onAdd() {
     console.log("新增商品")
+    this.props.navigation.navigate('ProductEdit')
   }
 
   onDelete(item) {
@@ -87,7 +88,7 @@ class ProductMng extends React.Component {
       <View style={styles.container}>
         <View>
           <Text>商品管理</Text>
-          <Button onPress={this.onAdd} title="新增商品"/>
+          <Button onPress={() => this.onAdd()} title="新增商品"/>
         </View>
         {
           productList && productList.map((item,index) => (

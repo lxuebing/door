@@ -1,48 +1,51 @@
 import React from 'react';
-import {StyleSheet, View, Image, Button, Text, TouchableHighlight} from 'react-native';
-import Swiper from 'react-native-swiper';
-
-import cartIcon from '../images/icons/cart.png';
+import {StyleSheet, View, Text, Image, Button, TouchableHighlight, Dimensions} from 'react-native';
+import {formatTime} from '../utils/DateUtil'
 
 const styles = StyleSheet.create({
   text: {
-    color: '#000',
+    color: 'black',
   },
-  productInfo: {
+  container: {
+    height: Dimensions.get('window').height,
+    backgroundColor: '#eeeeee',
+    padding: 5,
+    flex:1,
   },
-  swiper: {
-    width: 200,
-    height: 200,
-    borderWidth: 10,
-    borderColor: 'red'
+  row: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
-  swiperImg: {
-    height: 300,
+  img: {
+    height: 60,
+    width: 60
   },
-  baseInfo: {
-    padding: 10,
+  listItem: {
+    borderColor: 'silver',
     borderWidth: 1,
-    borderColor: 'silver'
-  },
-  price: {
-    fontSize:30,
-    color:'red'
-  },
-  name: {
-    fontSize: 24
-  },
-  summary: {
-    
-  },
-  detail: {
-    padding: 10,
-  },
-  operation: {
+    borderRadius: 5,
+    backgroundColor: 'white',
+    marginBottom: 5,
     flexDirection: 'row'
   },
-  shoppingCart: {
-    width: 50,
-    height: 50,
+  productImg: {
+    width: 150,
+    height: 150
+  },
+  productDetail: {
+    flex: 1,
+  },
+  productName: {
+    fontSize: 30
+  },
+  productName: {
+    fontSize: 24
+  },
+  productPrice: {
+    fontSize: 20,
+    color: 'red',
   }
 });
 
@@ -50,21 +53,35 @@ class OrderMng extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      product: {
-      },
+      orderList: [
+        
+      ]
     };
   }
 
+  onItemClicked(item) {
+    console.log("选择订单: " + item.name)
+    // todo: 将订单标记为已下单（人工）
+  }
+
+  loadMore() {
+    // todo: 滑动至底部时加载下一页
+  }
+
+  setOrder(item) {
+    console.log("下单", item)
+  }
+
   componentDidMount() {
-    fetch('http://mockjs.docway.net/mock/1WpkXqZLoSf/api/product/detail')
+    fetch('http://mockjs.docway.net/mock/1WpkXqZLoSf/api/manage/order/list')
       .then((response) => {
         return response.json()
       })
       .then((res) => {
-        console.log("商品详情", res)
+        console.log("商品列表", res)
         if(res.code == 1) {
           this.setState({
-            product: res.data
+            orderList: res.data
           })
         } else {
           // todo: 报错
@@ -74,34 +91,46 @@ class OrderMng extends React.Component {
         console.log("error: ", error)
       }
     )
+    console.log("导航", this.props.navigation)
   }
 
   render() {
-    let {product} = this.state
-    console.log(product.images)
+    let {orderList} = this.state
     return (
-      <View>
+      <View style={styles.container}>
+        <Text>订单管理</Text>
         {
-          product.id && <View style={styles.productInfo}>
-            {
-              // 这里应该放轮播，但没有好用的插件，react-native-swiper是个弟弟
-            }
-            <Image style={styles.swiperImg} source={{uri: "https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=151472226,3497652000&fm=26&gp=0.jpg"}}/>
-            <View style={styles.baseInfo}>
-              <Text style={styles.price}>{product.price && '￥' + product.price}</Text>
-              <Text style={styles.name}>{product.name}</Text>
-              <Text style={styles.summary}>{product.summary}</Text>
+          orderList && orderList.map((item,index) => (
+            <View key={index}>
+              <TouchableHighlight key={index} onPress = { (e) => this.onItemClicked(item) }>
+                <View style={styles.listItem}>
+                  <Image
+                    style={styles.productImg}
+                    source={{uri: item.img}}
+                  />
+                  <View style={styles.productDetail}>
+                    <Text style={styles.productName}>{item.name}</Text>
+                    <View style={styles.row}>
+                      <Text style={styles.productPrice}>￥{item.price}</Text>
+                      <Text>数量：{item.count}</Text>
+                      <Text>{formatTime(item.time)}</Text>
+                    </View>
+                    <View style={styles.row}>
+                      <Text>经销商：{item.customer}</Text>
+                    </View>
+                    <View style={styles.row}>
+                      <Text>地址：{item.address}</Text>
+                    </View>
+                    <View style={styles.row}>
+                      <Text>状态：{item.statusDesc}</Text>
+                      <Button title="下单" onPress={() => this.setOrder(item)}/>
+                    </View>
+                  </View>
+                </View>
+              </TouchableHighlight>
             </View>
-            <View style={styles.detail}>
-              <Text>详情</Text>
-            </View>
-        </View>
+          ))
         }
-        <View style={styles.operation}>
-          <Image source={cartIcon} style={styles.shoppingCart}/>
-          <Button title="加购物车"/>
-          <Button title="立即下单"/>
-        </View>
       </View>
     );
   }
