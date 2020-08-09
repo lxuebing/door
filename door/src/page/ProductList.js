@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, Text, Image, Button, TouchableHighlight, Dimensions} from 'react-native';
+import { useFocusEffect } from '@react-navigation/native'
 import {host} from '../constants/config'
 
 const styles = StyleSheet.create({
@@ -90,7 +91,9 @@ class ProductList extends React.Component {
 
   componentDidMount() {
     console.log("刷新页面")
-    this.loadMore()
+    this.props.navigation.addListener('focus', () => {
+      this.loadMore()
+    })
   }
 
   render() {

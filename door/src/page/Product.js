@@ -56,9 +56,11 @@ class Product extends React.Component {
     };
   }
 
-  componentDidMount() {
+  getProductDetail() {
+    if(!this.props.route || !this.props.route.params || !this.props.route.params.productId) {
+      return
+    }
     let {productId} = this.props.route.params
-    console.log(productId)
     fetch(host + '/api/product/detail?id=' + productId)
       .then((response) => {
         return response.json()
@@ -80,9 +82,19 @@ class Product extends React.Component {
     )
   }
 
+  componentDidMount() {
+    this.props.navigation.addListener('focus', () => {
+      this.getProductDetail()
+    })
+    
+  }
+
+  componentWillUnmount() {
+    this.setState = ()=>false;
+  } 
+
   render() {
     let {product} = this.state
-    console.log(product.images)
     return (
       <View>
         {

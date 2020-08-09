@@ -2,6 +2,7 @@ import React from 'react';
 import {DeviceEventEmitter, Image, StyleSheet, Button, TouchableHighlight, Text} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createStackNavigator} from '@react-navigation/stack';
 
 import homeIcon from '../images/icons/home.png';
 import homeSelectedIcon from '../images/icons/homeSelected.png';
@@ -29,6 +30,39 @@ const styles = StyleSheet.create({
 });
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+function ManageTab() {
+  return (
+    <Tab.Navigator
+      screenOptions={({route}) => ({
+        // eslint-disable-next-line react/prop-types
+        tabBarIcon: ({focused}) => {
+          let iconName;
+
+          if (route.name === 'ProductMng') {
+            iconName = focused ? homeSelectedIcon : homeIcon;
+          } else if (route.name === 'CategoryMng') {
+            iconName = focused ? categorySelectedIcon : categoryIcon;
+          } else if (route.name === 'OrderMng') {
+            iconName = focused ? cartSelectedIcon : cartIcon;
+          } else if (route.name === 'UserMng') {
+            iconName = focused ? userSelectedIcon : userIcon;
+          }
+          return <Image source={iconName} style={styles.icon} />;
+        },
+      })}
+      tabBarOptions={{
+        activeTintColor: '#5695D7',
+        inactiveTintColor: '#000',
+      }}>
+      <Tab.Screen name="ProductMng" component={ProductMng} options={{title:'商品管理'}}/>
+      <Tab.Screen name="CategoryMng" component={CategoryMng} options={{title:'品类管理'}}/>
+      <Tab.Screen name="OrderMng" component={OrderMng} options={{title:'订单管理'}}/>
+      <Tab.Screen name="UserMng" component={UserMng} options={{title:'我的'}}/>
+    </Tab.Navigator>
+  )
+}
 
 export default class ManageScene extends React.Component {
 
@@ -48,38 +82,14 @@ export default class ManageScene extends React.Component {
     }
 
     render() {
-        return (
-            <NavigationContainer>
-              <Tab.Navigator
-                screenOptions={({route}) => ({
-                  // eslint-disable-next-line react/prop-types
-                  tabBarIcon: ({focused}) => {
-                    let iconName;
-        
-                    if (route.name === '首页') {
-                      iconName = focused ? homeSelectedIcon : homeIcon;
-                    } else if (route.name === '分类') {
-                      iconName = focused ? categorySelectedIcon : categoryIcon;
-                    } else if (route.name === '购物车') {
-                      iconName = focused ? cartSelectedIcon : cartIcon;
-                    } else if (route.name === '我的') {
-                      iconName = focused ? userSelectedIcon : userIcon;
-                    }
-                    return <Image source={iconName} style={styles.icon} />;
-                  },
-                })}
-                tabBarOptions={{
-                  activeTintColor: '#5695D7',
-                  inactiveTintColor: '#000',
-                }}>
-                <Tab.Screen name="商品管理" component={ProductMng} />
-                <Tab.Screen name="品类管理" component={CategoryMng} />
-                <Tab.Screen name="订单管理" component={OrderMng} />
-                <Tab.Screen name="我的" component={UserMng} />
-                <Tab.Screen name="ProductEdit" component={ProductEdit} />
-              </Tab.Navigator>
-            </NavigationContainer> 
-          )
+      return (
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name="ManageTab" component={ManageTab} options={{title:'搜索'}}/>
+            <Stack.Screen name="ProductEdit" component={ProductEdit} options={{title:'商品编辑'}}/>
+          </Stack.Navigator>
+        </NavigationContainer> 
+      )
     }
   
 };

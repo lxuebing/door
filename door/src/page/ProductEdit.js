@@ -3,7 +3,6 @@ import {StyleSheet, View, Image, Button, TextInput, Text, TouchableHighlight} fr
 import Swiper from 'react-native-swiper';
 
 import addImg from '../images/icons/addImg.png';
-import back from '../images/icons/back.png';
 
 const styles = StyleSheet.create({
   text: {
@@ -45,11 +44,6 @@ class ProductEdit extends React.Component {
     };
   }
 
-  goBack() {
-    let navigation = this.props.navigation
-    navigation.canGoBack() && navigation.goBack()
-  }
-
   componentDidMount() {
     fetch('http://mockjs.docway.net/mock/1WpkXqZLoSf/api/product/detail')
       .then((response) => {
@@ -75,11 +69,6 @@ class ProductEdit extends React.Component {
     let {product, imgs} = this.state
     return (
       <View>
-        <View style={styles.row}>
-          <TouchableHighlight onPress={() => this.goBack()}>
-            <Image source={back}/>
-          </TouchableHighlight>
-        </View>
         <View style={styles.row}>
           <Text>名称：</Text>
           <TextInput style={styles.input} />
