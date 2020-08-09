@@ -65,13 +65,13 @@ class ProductMng extends React.Component {
   componentDidMount() {
     get('/api/product/list')
       .then((res) => {
-        console.log("商品列表", res)
-        if(res.code == 0) {
+        console.log("商品列表", res.data)
+        if(res.data.code == 0) {
           this.setState({
-            productList: res.data
+            productList: res.data.data
           })
         } else {
-          console.log("获取商品列表失败: ", res)
+          console.log("获取商品列表失败: ", res.data)
         }
       })
       .catch((error) => {

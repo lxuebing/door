@@ -71,14 +71,15 @@ class ProductList extends React.Component {
     }
     get('/api/product/list', query)
       .then((res) => {
-        console.log("商品列表", res)
-        if(res.code == 0) {
+        let data = res.data
+        console.log("商品列表", data)
+        if(data.code == 0) {
           this.setState({
-            productList: productList.concat(res.data)
+            productList: productList.concat(data.data)
           })
         } else {
           // todo: 报错
-          console.log("错误:", res.msg)
+          console.log("错误:", data.msg)
         }
       })
       .catch((error) => {

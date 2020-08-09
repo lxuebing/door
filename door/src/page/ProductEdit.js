@@ -3,7 +3,7 @@ import {StyleSheet, View, Image, Button, TextInput, Text, TouchableHighlight} fr
 import Swiper from 'react-native-swiper';
 
 import addImg from '../images/icons/addImg.png';
-import {get} from '../api/request'
+import {get, request} from '../api/request'
 
 const styles = StyleSheet.create({
   text: {
@@ -51,20 +51,38 @@ class ProductEdit extends React.Component {
     }
     get('/api/product/detail', {id: this.props.route.params.productId})
       .then((res) => {
-        console.log("商品详情", res)
-        if(res.code == 0) {
+        let data = res.data
+        console.log("商品详情", data)
+        if(data.code == 0) {
           this.setState({
-            product: res.data,
-            imgs: res.data.images
+            product: data.data,
+            imgs: data.images
           })
         } else {
-          console.log("获取商品详情失败: ", error)
+          console.log("获取商品详情失败: ", data)
         }
       })
       .catch((error) => {
         console.log("error: ", error)
       }
     )
+  }
+
+  save() {
+    request({
+      method: 'POST',
+      url: '/api/manage/product/add',
+      data: {
+        'name': '名称',
+        'images': ["aaa"],
+        'price': 1000,
+        'categoryId': 6
+      }
+    }).then(res => {
+      console.log("成功", res.data)
+    }).catch(err => {
+      console.log("失败", err)
+    })
   }
 
   render() {
@@ -101,7 +119,7 @@ class ProductEdit extends React.Component {
           <TextInput placeholder={'输入产品详情'} vaule={product.detail}/>
         </View>
         <View style={styles.row}>
-          <Button title={'保存'} />
+          <Button title={'保存'} onPress={this.save} />
           <Button title={'立即发布'} />
         </View>
       </View>

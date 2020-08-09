@@ -1,4 +1,5 @@
 import { saveToken, storage } from './storage';
+import axios from 'axios'
 const qs = require('qs');
 
 const BASE_URL = 'https://www.lemonlog.wang/api/shop';
@@ -19,19 +20,18 @@ function shouldFilter(url) {
 }
 
 function requestWithToken({ url, method, headers, params, data}) {
-
   return new Promise((resolve, reject) => {
     storage.load({key: 'token'}).then(token => {
-        fetch(url, {method, headers:{...headers, token}, body: data})
-        .then(response => {
-            return response.json()
-        })
-        .then(res => {
-            resolve(res)
-        })
-        .catch(err => {
-            reject(err)
-        })
+      axios({
+        method,
+        url,
+        headers: {...headers, token},
+        data
+      }).then(res => {
+        resolve(res)
+      }).catch(err => {
+        reject(err)
+      })
     }).catch(err => {
         // todo 没有找到，跳转登录
         reject(err)
@@ -54,27 +54,18 @@ export function request({ url, method, headers, params, data}) {
   if (params) {
     completeUrl = completeUrl + '?' + paramsSerializer(params);
   }
-  
+  console.log("发起请求：", completeUrl)
   if(shouldFilter(url)) {
-    return requestWithToken({ completeUrl, method, headers, params, data})
+    return requestWithToken({ url: completeUrl, method, headers, params, data})
   } else {
-    return fetch(completeUrl, {method, headers, body: data})
-    .then(response => {
-        return response.json()
-    })
+    return axios({url:completeUrl, method, headers, data})
   }
 }
 
 export function get(url, params) {
     return request({ url, params, method:'GET'})
 }
-  
-/**
- * 请求参数序列化
- *
- * @param {Object} params - 请求参数
- * @returns {string}
- */
+
 function paramsSerializer(params) {
     return qs.stringify(params, { arrayFormat: 'brackets' });
 }

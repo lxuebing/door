@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, View, Text, Button, Image, TextInput, TouchableHighlight, Dimensions} from 'react-native';
-import homePicture from '../images/icons/home.png';
 import TreeView from './component/TreeView'
+import {get} from '../api/request'
 
 const styles = StyleSheet.create({
   text: {
@@ -38,14 +38,12 @@ class CategoryMng extends React.Component {
   }
 
   componentDidMount() {
-    fetch('http://mockjs.docway.net/mock/1WpkXqZLoSf/api/category/all')
-      .then((response) => {
-        return response.json()
-      })
+    get('/api/category/all')
       .then((res) => {
-        console.log("品类树", res)
-        if(res.code === 1) {
-          let cates = res.data
+        let data = res.data
+        console.log("品类树", data)
+        if(data.code === 0) {
+          let cates = data.data
           this.setState({
             categoryTree: cates
           })
