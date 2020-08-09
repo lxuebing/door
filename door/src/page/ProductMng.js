@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text, Image, Button, TouchableHighlight, Dimensions} from 'react-native';
+import {StyleSheet, View, ScrollView, Text, Image, Button, TouchableHighlight, Dimensions} from 'react-native';
 import {get} from '../api/request'
 
 const styles = StyleSheet.create({
@@ -87,6 +87,7 @@ class ProductMng extends React.Component {
         <View style={{marginBottom: 5}}>
           <Button onPress={() => this.onAdd()} title="新增商品"/>
         </View>
+        <ScrollView>
         {
           productList && productList.map((item,index) => (
             <View key={index}>
@@ -107,6 +108,7 @@ class ProductMng extends React.Component {
             </View>
           ))
         }
+        </ScrollView>
       </View>
     );
   }

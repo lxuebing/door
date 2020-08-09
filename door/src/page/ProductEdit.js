@@ -1,9 +1,10 @@
 import React from 'react';
 import {StyleSheet, View, Image, Button, TextInput, Text, TouchableHighlight} from 'react-native';
 import Swiper from 'react-native-swiper';
+import ImagePicker from 'react-native-image-picker'
 
 import addImg from '../images/icons/addImg.png';
-import {get, request} from '../api/request'
+import {get, request, uploadImg} from '../api/request'
 
 const styles = StyleSheet.create({
   text: {
@@ -40,7 +41,6 @@ class ProductEdit extends React.Component {
       product: {
       },
       imgs: [
-        "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596739146472&di=f57362d2b442f94ee30fe199dca87190&imgtype=0&src=http%3A%2F%2Fa0.att.hudong.com%2F56%2F12%2F01300000164151121576126282411.jpg"
       ]
     };
   }
@@ -69,20 +69,68 @@ class ProductEdit extends React.Component {
   }
 
   save() {
-    request({
-      method: 'POST',
-      url: '/api/manage/product/add',
-      data: {
-        'name': '名称',
-        'images': ["aaa"],
-        'price': 1000,
-        'categoryId': 6
-      }
-    }).then(res => {
+    console.log("state", this.state)
+    let {product, imgs} = this.state
+    let url = product.id ? '/api/manage/product/update':'/api/manage/product/add'
+    let data = {
+      ...product,
+      img: imgs && imgs.length > 0 && imgs[0],
+      images: imgs
+    }
+    console.log("保存商品信息：", data)
+    request({ method: 'POST', url, data }).then(res => {
       console.log("成功", res.data)
     }).catch(err => {
       console.log("失败", err)
     })
+  }
+
+  changeState(state) {
+    this.setState({
+      product: {...this.state.product, ...state}
+    })
+  }
+
+  addImg() {
+    console.log("添加图片")
+    const options = {
+      title: '请选择',
+      cancelButtonTitle:'取消',
+      takePhotoButtonTitle:'拍照',
+      chooseFromLibraryButtonTitle:'从相册选择',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+    
+    ImagePicker.showImagePicker(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('customButton')
+      } else {
+        const source = { uri: response.uri , type: response.type, name: response.fileName};
+        console.log("source:" + source)
+        uploadImg(source).then(res => {
+          let data = res.data
+          console.log("上传成功：", data)
+          let imgs = this.state.imgs || []
+          imgs.push(data.data)
+          this.setState({imgs})
+        }).catch(err => {
+          console.log("上传失败：", err)
+        })
+      }
+      
+    });
+  }
+
+  removeImg() {
+    console.log("删除图片")
+    
   }
 
   render() {
@@ -91,11 +139,11 @@ class ProductEdit extends React.Component {
       <View>
         <View style={styles.row}>
           <Text>名称：</Text>
-          <TextInput style={styles.input} value={product.name}/>
+          <TextInput style={styles.input} defaultValue={product.name} onChangeText={(name) => this.changeState({name})}/>
         </View>
         <View style={styles.row}>
           <Text>单价：</Text>
-          <TextInput style={styles.input} value={product.price}/>
+          <TextInput style={styles.input} defaultValue={product.price}/>
         </View>
         <View style={styles.row}>
           <Text>品类：</Text>
@@ -103,7 +151,7 @@ class ProductEdit extends React.Component {
         </View>
         <View style={styles.row}>
           <Text>简介：</Text>
-          <TextInput style={styles.input} value={product.summary}/>
+          <TextInput style={styles.input} defaultValue={product.summary}/>
         </View>
         <View style={styles.row}>
           <Text>图片：</Text>
@@ -112,14 +160,16 @@ class ProductEdit extends React.Component {
               <Image key={index} style={styles.img} source={{uri: item}}/>
               ))
           }
-          <Image style={styles.img} source={addImg}/>
+          <TouchableHighlight onPress={() => this.addImg()}>
+            <Image style={styles.img} source={addImg} />
+          </TouchableHighlight>
         </View>
         <View style={styles.row}>
           <Text>详情：</Text>
-          <TextInput placeholder={'输入产品详情'} vaule={product.detail}/>
+          <TextInput placeholder={'输入产品详情'} defaultValue={product.detail}/>
         </View>
         <View style={styles.row}>
-          <Button title={'保存'} onPress={this.save} />
+          <Button title={'保存'} onPress={() => this.save()} />
           <Button title={'立即发布'} />
         </View>
       </View>

@@ -66,6 +66,19 @@ export function get(url, params) {
     return request({ url, params, method:'GET'})
 }
 
+export function uploadImg(img) {
+  let formData = new FormData()
+  formData.append("file", img)
+  return request({
+    method: 'POST',
+    url: '/api/manage/resource/qiniu/upload',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    data: formData
+  })
+}
+
 function paramsSerializer(params) {
     return qs.stringify(params, { arrayFormat: 'brackets' });
 }
