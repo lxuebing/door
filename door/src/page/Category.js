@@ -1,10 +1,10 @@
 import React from 'react';
 import {StyleSheet, View, Text, Image, TouchableHighlight, Dimensions} from 'react-native';
-import {host} from '../constants/config'
+import {get} from '../api/request'
 
 const styles = StyleSheet.create({
   text: {
-    color: 'red',
+    color: 'black',
   },
   container: {
     height: Dimensions.get('window').height,
@@ -55,10 +55,7 @@ class Category extends React.Component {
 
   loadSecondCateList(cate) {
     console.log("1级品类: " + cate.id + cate.name)
-    fetch(host + '/api/category/list?root=' + cate.id)
-      .then((response) => {
-        return response.json()
-      })
+    get('/api/category/list', {root: cate.id})
       .then((res) => {
         console.log("加载二级品类", res)
         if(res.code === 0) {
@@ -72,15 +69,12 @@ class Category extends React.Component {
         }
       })
       .catch((error) => {
-        console.log(222, error)
+        console.log("获取二级品类失败", error)
       })
   }
 
   componentDidMount() {
-    fetch(host + '/api/category/list?root=0')
-      .then((response) => {
-        return response.json()
-      })
+    get('/api/category/list', {root: 0})
       .then((res) => {
         console.log("一级品类", res)
         if(res.code === 0) {
@@ -95,7 +89,7 @@ class Category extends React.Component {
         }
       })
       .catch((error) => {
-        console.log(222, error)
+        console.log("获取一级品类失败", error)
       })
   }
 

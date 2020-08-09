@@ -1,7 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, Text, Image, Button, TouchableHighlight, Dimensions} from 'react-native';
-import { useFocusEffect } from '@react-navigation/native'
-import {host} from '../constants/config'
+import {get} from '../api/request'
 
 const styles = StyleSheet.create({
   text: {
@@ -60,18 +59,17 @@ class ProductList extends React.Component {
 
   loadMore() {
     let {productList} = this.state
-    let query = "?limit=10"
+    let query = {
+      limit: 10
+    }
     if(this.props.route && this.props.route.params) {
       let {category} = this.props.route.params
-      query = query + "&category=" + category
+      query.category = category
     }
     if(productList && productList.length > 0) {
-      query = query + "&startId=" + productList[productList.length-1].id
+      query.startId = productList[productList.length-1].id
     }
-    fetch(host + '/api/product/list' + query)
-      .then((response) => {
-        return response.json()
-      })
+    get('/api/product/list', query)
       .then((res) => {
         console.log("商品列表", res)
         if(res.code == 0) {
@@ -84,7 +82,7 @@ class ProductList extends React.Component {
         }
       })
       .catch((error) => {
-        console.log("error: ", error)
+        console.log("获取商品列表失败: ", error)
       }
     )
   }

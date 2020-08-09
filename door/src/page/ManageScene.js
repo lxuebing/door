@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-function ManageTab() {
+function ManageTab({navigation}) {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -56,7 +56,15 @@ function ManageTab() {
         activeTintColor: '#5695D7',
         inactiveTintColor: '#000',
       }}>
-      <Tab.Screen name="ProductMng" component={ProductMng} options={{title:'商品管理'}}/>
+      <Tab.Screen name="ProductMng" component={ProductMng} options={{title:'商品管理',
+        headerRight: () => (
+          <Button
+            onPress={() => navigation.navagate('ProductEdit')}
+            title="新增商品"
+            color="#fff"
+          />
+        )
+      }}/>
       <Tab.Screen name="CategoryMng" component={CategoryMng} options={{title:'品类管理'}}/>
       <Tab.Screen name="OrderMng" component={OrderMng} options={{title:'订单管理'}}/>
       <Tab.Screen name="UserMng" component={UserMng} options={{title:'我的'}}/>

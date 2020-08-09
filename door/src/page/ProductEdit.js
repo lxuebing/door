@@ -3,6 +3,7 @@ import {StyleSheet, View, Image, Button, TextInput, Text, TouchableHighlight} fr
 import Swiper from 'react-native-swiper';
 
 import addImg from '../images/icons/addImg.png';
+import {get} from '../api/request'
 
 const styles = StyleSheet.create({
   text: {
@@ -45,18 +46,19 @@ class ProductEdit extends React.Component {
   }
 
   componentDidMount() {
-    fetch('http://mockjs.docway.net/mock/1WpkXqZLoSf/api/product/detail')
-      .then((response) => {
-        return response.json()
-      })
+    if(!this.props.route || !this.props.route.params || !this.props.route.params.productId) {
+      return
+    }
+    get('/api/product/detail', {id: this.props.route.params.productId})
       .then((res) => {
         console.log("商品详情", res)
-        if(res.code == 1) {
+        if(res.code == 0) {
           this.setState({
-            product: res.data
+            product: res.data,
+            imgs: res.data.images
           })
         } else {
-          // todo: 报错
+          console.log("获取商品详情失败: ", error)
         }
       })
       .catch((error) => {
@@ -71,11 +73,11 @@ class ProductEdit extends React.Component {
       <View>
         <View style={styles.row}>
           <Text>名称：</Text>
-          <TextInput style={styles.input} />
+          <TextInput style={styles.input} value={product.name}/>
         </View>
         <View style={styles.row}>
           <Text>单价：</Text>
-          <TextInput style={styles.input} />
+          <TextInput style={styles.input} value={product.price}/>
         </View>
         <View style={styles.row}>
           <Text>品类：</Text>
@@ -83,7 +85,7 @@ class ProductEdit extends React.Component {
         </View>
         <View style={styles.row}>
           <Text>简介：</Text>
-          <TextInput style={styles.input} />
+          <TextInput style={styles.input} value={product.summary}/>
         </View>
         <View style={styles.row}>
           <Text>图片：</Text>
@@ -96,7 +98,7 @@ class ProductEdit extends React.Component {
         </View>
         <View style={styles.row}>
           <Text>详情：</Text>
-          <TextInput placeholder={'输入产品详情'}/>
+          <TextInput placeholder={'输入产品详情'} vaule={product.detail}/>
         </View>
         <View style={styles.row}>
           <Button title={'保存'} />

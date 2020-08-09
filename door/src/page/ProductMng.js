@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, Text, Image, Button, TouchableHighlight, Dimensions} from 'react-native';
+import {get} from '../api/request'
 
 const styles = StyleSheet.create({
   text: {
@@ -45,7 +46,7 @@ class ProductMng extends React.Component {
   }
 
   onItemClicked(item) {
-    this.props.navigation.navigate('ProductEdit')
+    this.props.navigation.navigate('ProductEdit', {productId: item.id})
   }
 
   onAdd() {
@@ -62,18 +63,15 @@ class ProductMng extends React.Component {
   }
 
   componentDidMount() {
-    fetch('http://mockjs.docway.net/mock/1WpkXqZLoSf/api/product/list')
-      .then((response) => {
-        return response.json()
-      })
+    get('/api/product/list')
       .then((res) => {
         console.log("商品列表", res)
-        if(res.code == 1) {
+        if(res.code == 0) {
           this.setState({
             productList: res.data
           })
         } else {
-          // todo: 报错
+          console.log("获取商品列表失败: ", res)
         }
       })
       .catch((error) => {
@@ -86,8 +84,7 @@ class ProductMng extends React.Component {
     let {productList} = this.state
     return (
       <View style={styles.container}>
-        <View>
-          <Text>商品管理</Text>
+        <View style={{marginBottom: 5}}>
           <Button onPress={() => this.onAdd()} title="新增商品"/>
         </View>
         {

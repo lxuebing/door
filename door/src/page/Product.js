@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, View, Image, Button, Text, TouchableHighlight} from 'react-native';
 import Swiper from 'react-native-swiper';
-import {host} from '../constants/config'
+import {get} from '../api/request'
 
 import cartIcon from '../images/icons/cart.png';
 
@@ -61,10 +61,7 @@ class Product extends React.Component {
       return
     }
     let {productId} = this.props.route.params
-    fetch(host + '/api/product/detail?id=' + productId)
-      .then((response) => {
-        return response.json()
-      })
+    get('/api/product/detail', {id: productId})
       .then((res) => {
         console.log("商品详情", res)
         if(res.code == 0) {
@@ -77,7 +74,7 @@ class Product extends React.Component {
         }
       })
       .catch((error) => {
-        console.log("error: ", error)
+        console.log("获取商品失败: ", error)
       }
     )
   }
