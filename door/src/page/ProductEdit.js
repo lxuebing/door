@@ -2,6 +2,7 @@ import React from 'react';
 import {StyleSheet, View, Image, Button, TextInput, Text, TouchableHighlight} from 'react-native';
 import Swiper from 'react-native-swiper';
 import ImagePicker from 'react-native-image-picker'
+import DropDownPicker from 'react-native-dropdown-picker'
 
 import addImg from '../images/icons/addImg.png';
 import {get, request, uploadImg} from '../api/request'
@@ -41,7 +42,8 @@ class ProductEdit extends React.Component {
       product: {
       },
       imgs: [
-      ]
+      ],
+      cateList:[]
     };
   }
 
@@ -49,23 +51,8 @@ class ProductEdit extends React.Component {
     if(!this.props.route || !this.props.route.params || !this.props.route.params.productId) {
       return
     }
-    get('/api/product/detail', {id: this.props.route.params.productId})
-      .then((res) => {
-        let data = res.data
-        console.log("商品详情", data)
-        if(data.code == 0) {
-          this.setState({
-            product: data.data,
-            imgs: data.images
-          })
-        } else {
-          console.log("获取商品详情失败: ", data)
-        }
-      })
-      .catch((error) => {
-        console.log("error: ", error)
-      }
-    )
+    this.loadCategorys()
+    this.loadProductDetail()
   }
 
   save() {
@@ -133,21 +120,92 @@ class ProductEdit extends React.Component {
     
   }
 
+  loadCategorys() {
+    get('/api/category/all')
+    .then((res) => {
+      let data = res.data
+      console.log("品类树", data)
+      if(data.code === 0) {
+        let cates = data.data
+        let cateList = []
+        this.toDropListItems(cateList, {children:cates})
+        console.log(cateList)
+        this.setState({
+          cateList
+        })
+      } else {
+        // todo: token错误提示
+      }
+    })
+    .catch((error) => {
+      console.log("获取品类树失败", error)
+    })
+  }
+
+  loadProductDetail() {
+    get('/api/product/detail', {id: this.props.route.params.productId})
+      .then((res) => {
+        let data = res.data
+        console.log("商品详情", data)
+        if(data.code == 0) {
+          this.setState({
+            product: data.data,
+            imgs: data.images
+          })
+        } else {
+          console.log("获取商品详情失败: ", data)
+        }
+      })
+      .catch((error) => {
+        console.log("error: ", error)
+      }
+    )
+  }
+
+  toDropListItems(list, node) {
+    if(node.children && node.children.length > 0) {
+      node.children.map(o => this.toDropListItems(list, o))
+    } else {
+      list.push({label: node.name, value: node.id})
+    }
+  }
+
+  contain(cateList, cate) {
+    if(!cateList) return false
+    for(let idx in cateList) {
+      if(cateList[idx].value === cate) return true
+    }
+    return false
+  }
+
   render() {
-    let {product, imgs} = this.state
+    let {product, imgs, cateList} = this.state
+    let cate = product.categoryId
+    if(!this.contain(cateList, cate)) cate = undefined
+    
     return (
       <View>
         <View style={styles.row}>
           <Text>名称：</Text>
-          <TextInput style={styles.input} defaultValue={product.name} onChangeText={(name) => this.changeState({name})}/>
+          <TextInput style={styles.input} defaultValue={product.name} onChangeText={name => this.changeState({name})}/>
         </View>
         <View style={styles.row}>
           <Text>单价：</Text>
-          <TextInput style={styles.input} defaultValue={product.price}/>
+          <TextInput style={styles.input} defaultValue={product.price} onChangeText={price => this.changeState({price})}/>
         </View>
         <View style={styles.row}>
           <Text>品类：</Text>
-          <TextInput style={styles.input} />
+          <DropDownPicker
+            items={cateList}
+            defaultValue={cate}
+            containerStyle={{height: 40, flex: 1}}
+            style={{backgroundColor: '#fafafa'}}
+            itemStyle={{
+                justifyContent: 'flex-start'
+            }}
+            dropDownStyle={{backgroundColor: '#fafafa'}}
+            onChangeItem={item => this.changeState({categoryId: item.value})}
+          />
         </View>
         <View style={styles.row}>
           <Text>简介：</Text>
