@@ -228,7 +228,7 @@ class ProductEdit extends React.Component {
         </View>
         <View style={styles.row}>
           <Button title={'保存'} onPress={() => this.save()} />
-          <Button title={'立即发布'} />
+          {/* <Button title={'立即发布'} /> */}
         </View>
       </View>
     );

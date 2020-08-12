@@ -59,6 +59,7 @@ export default class NurTreeView extends Component {
             data={data}
             renderItem={renderItem}
             extraData={this.props}
+            keyExtractor={(item, index) => index.toString()}
         />
     }
 
