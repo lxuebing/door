@@ -91,6 +91,11 @@ class Product extends React.Component {
     this.setState = ()=>false;
   } 
 
+  placeOrder(custom) {
+    console.log('下单', this.state.product.id)
+    this.props.navigation.navigate('PlaceOrder', {productId: this.state.product.id, itemId: 1, custom})
+  }
+
   render() {
     let {product} = this.state
     return (
@@ -113,8 +118,8 @@ class Product extends React.Component {
         }
         <View style={styles.operation}>
           <Image source={cartIcon} style={styles.shoppingCart}/>
-          <Button title="加购物车"/>
-          <Button title="立即下单"/>
+          <Button title="去定制" onPress={() => this.placeOrder(1)}/>
+          <Button title="去下单" onPress={() => this.placeOrder(0)}/>
         </View>
       </View>
     );
