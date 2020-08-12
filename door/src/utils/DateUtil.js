@@ -1,4 +1,5 @@
 const formatTime = timeStamp => {
+    if(!timeStamp) return ''
     const date = new Date(timeStamp*1000)
     const year = date.getFullYear()
     const month = date.getMonth() + 1

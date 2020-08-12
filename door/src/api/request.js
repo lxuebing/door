@@ -66,6 +66,10 @@ export function get(url, params) {
     return request({ url, params, method:'GET'})
 }
 
+export function post(url, data) {
+  return request({url, data, method:'POST'})
+}
+
 export function uploadImg(img) {
   let formData = new FormData()
   formData.append("file", img)

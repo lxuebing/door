@@ -9,7 +9,7 @@ export const storage = new Storage({
 
 storage.save({
   key:'token',
-  data:"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIzIiwic3ViIjoidWRldiIsImlhdCI6MTU5NzE2MDkzMCwiZXhwIjoxNTk3MTg2MTMwfQ.mCaEXFw3yhip3YNZuKH_wfHcifHXNX6CBtx1ugC31bY"
+  data:"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIzIiwic3ViIjoidWRldiIsImlhdCI6MTU5NzIwMTkxMywiZXhwIjoxNTk3MjI3MTEzfQ.Zl_q9H4faKWrcmpm1tYbEtk-cIFJIOL-2TgLzaMCNfw"
 })
 
 /**

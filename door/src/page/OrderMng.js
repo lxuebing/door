@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, View, Text, Image, Button, TouchableHighlight, Dimensions} from 'react-native';
 import {formatTime} from '../utils/DateUtil'
+import {get} from '../api/request'
 
 const styles = StyleSheet.create({
   text: {
@@ -60,7 +61,7 @@ class OrderMng extends React.Component {
   }
 
   onItemClicked(item) {
-    console.log("选择订单: " + item.name)
+    console.log("选择订单: ", item.id)
     // todo: 将订单标记为已下单（人工）
   }
 
@@ -69,36 +70,61 @@ class OrderMng extends React.Component {
   }
 
   setOrder(item) {
-    console.log("下单", item)
+    console.log("向供应商订货", item)
+    get('/api/manage/order/set', {orderId: item.id})
+    .then(res => {
+      let data = res.data
+      if(data.code === 0) {
+        console.log("发起供应商订单", data)
+        this.loadOrderList()
+      } else {
+        console.log("发起供应商订单失败", data)
+      }
+    }).catch(err => {
+      console.log("发起供应商订单失败", err)
+    })
   }
 
   componentDidMount() {
-    fetch('http://mockjs.docway.net/mock/1WpkXqZLoSf/api/manage/order/list')
-      .then((response) => {
-        return response.json()
-      })
-      .then((res) => {
-        console.log("商品列表", res)
-        if(res.code == 1) {
-          this.setState({
-            orderList: res.data
-          })
-        } else {
-          // todo: 报错
-        }
-      })
-      .catch((error) => {
-        console.log("error: ", error)
+    this.loadOrderList()
+  }
+
+  loadOrderList() {
+    get('/api/manage/order/list')
+    .then((res) => {
+      let data = res.data
+      console.log("订单列表", data)
+      if(data.code == 0) {
+        this.setState({
+          orderList: data.data
+        })
+      } else {
+        // todo: 报错
+        console.log("获取订单列表失败", data)
       }
-    )
-    console.log("导航", this.props.navigation)
+    })
+    .catch((error) => {
+      console.log("error: ", error)
+    }
+  )
+  }
+
+  getStatus(item){
+    if(item.status === 1) {
+      return (<Text style={{}}>{'待处理'}</Text>)
+    }
+    if(item.status === 2) {
+      return (<Text style={{}}>{'已向供应商订货'}</Text>)
+    }
+    if(item.status === 3) {
+      return (<Text style={{color:'green'}}>{'已签收'}</Text>)
+    }
   }
 
   render() {
     let {orderList} = this.state
     return (
       <View style={styles.container}>
-        <Text>订单管理</Text>
         {
           orderList && orderList.map((item,index) => (
             <View key={index}>
@@ -106,14 +132,14 @@ class OrderMng extends React.Component {
                 <View style={styles.listItem}>
                   <Image
                     style={styles.productImg}
-                    source={{uri: item.img}}
+                    source={{uri: item.productImg}}
                   />
                   <View style={styles.productDetail}>
-                    <Text style={styles.productName}>{item.name}</Text>
+                    <Text style={styles.productName}>{item.productName}</Text>
                     <View style={styles.row}>
                       <Text style={styles.productPrice}>￥{item.price}</Text>
                       <Text>数量：{item.count}</Text>
-                      <Text>{formatTime(item.time)}</Text>
+                      <Text>{formatTime(item.createTime)}</Text>
                     </View>
                     <View style={styles.row}>
                       <Text>经销商：{item.customer}</Text>
@@ -122,8 +148,10 @@ class OrderMng extends React.Component {
                       <Text>地址：{item.address}</Text>
                     </View>
                     <View style={styles.row}>
-                      <Text>状态：{item.statusDesc}</Text>
-                      <Button title="下单" onPress={() => this.setOrder(item)}/>
+                      {this.getStatus(item)}
+                      { item.status === 1 &&
+                        <Button title="订货" onPress={() => this.setOrder(item)}/>
+                      }
                     </View>
                   </View>
                 </View>

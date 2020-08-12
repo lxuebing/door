@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text, Image, Button, TouchableHighlight, Dimensions} from 'react-native';
+import {StyleSheet, View, ScrollView, Text, Image, Button, TouchableHighlight, Dimensions} from 'react-native';
 import {get} from '../api/request'
 
 const styles = StyleSheet.create({
@@ -98,12 +98,7 @@ class ProductList extends React.Component {
   render() {
     let {productList} = this.state
     return (
-      <View style={styles.container}>
-        {/* <Button 
-        title="返回"
-        onPress={() => {
-          navigation.canGoBack() && navigation.goBack()
-        }}/> */}
+      <ScrollView style={styles.container}>
         {
           productList && productList.map((item,index) => (
             <View key={index}>
@@ -122,7 +117,7 @@ class ProductList extends React.Component {
             </View>
           ))
         }
-      </View>
+      </ScrollView>
     );
   }
 }
