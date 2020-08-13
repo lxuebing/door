@@ -17,13 +17,13 @@ storage.save({
  * @param {string} data.access_token
  */
 export function saveToken(access_token) {
-  storage.save({
+  return storage.save({
     key: 'token',
     data: access_token
   });
 }
 
-export function removeTokens() {
+export function removeToken() {
   storage.remove({
     key: 'token'
   });

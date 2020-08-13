@@ -1,6 +1,7 @@
 import React from 'react';
 import {DeviceEventEmitter, StyleSheet, View, Image, ImageBackground, Text, TouchableHighlight} from 'react-native';
 import avatar from '../images/images/avatar.jpg';
+import {removeToken} from '../api/storage'
 
 const styles = StyleSheet.create({
   text: {
@@ -68,6 +69,11 @@ class User extends React.Component {
     DeviceEventEmitter.emit('switchMode', {})
   }
 
+  logout() {
+    removeToken()
+    this.props.navigation.navigate('Login')
+  }
+
   render() {
     let {userInfo, mode} = this.state
     return (
@@ -87,6 +93,9 @@ class User extends React.Component {
                 </TouchableHighlight>
               </>
             }
+            <TouchableHighlight onPress={ (e) => this.logout() }>
+              <Text style={styles.linkButton}>退出登录</Text>
+            </TouchableHighlight>
             
           </View>
         </ImageBackground>
