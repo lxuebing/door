@@ -1,7 +1,9 @@
 import React from 'react';
-import {StyleSheet, View, Image, Button, Text, TouchableHighlight} from 'react-native';
+import {StyleSheet, View, ScrollView, Image, Button, Text, TouchableHighlight} from 'react-native';
 import Swiper from 'react-native-swiper';
 import {get} from '../api/request'
+import Selector from './component/Selector'
+import {buildParamsString} from '../utils/StringUtil'
 
 import cartIcon from '../images/icons/cart.png';
 
@@ -53,6 +55,7 @@ class Product extends React.Component {
     this.state = {
       product: {
       },
+      items: []
     };
   }
 
@@ -66,8 +69,29 @@ class Product extends React.Component {
         this.setState({
           product: res.data
         })
+        this.getItems(productId)
     })
       
+  }
+
+  getItems(productId) {
+    get('/api/product/item/list', {productId}, res => {
+      console.log("商品item列表", res)
+      let items = [] 
+      res.data.map(o => {
+        items.push({
+          id: o.id,
+          key: o.id,
+          value: buildParamsString(o.params)
+        })
+      })
+      if(items.length > 0) {
+        this.setState({
+          items,
+          item: items[0]
+        })
+      }
+  })
   }
 
   componentDidMount() {
@@ -82,14 +106,26 @@ class Product extends React.Component {
   } 
 
   placeOrder(custom) {
-    console.log('下单', this.state.product.id)
-    this.props.navigation.navigate('PlaceOrder', {productId: this.state.product.id, itemId: 1, custom})
+    console.log('下单', this.state.product)
+    let itemId = null 
+    if(this.state.item) itemId = this.state.item.id
+    if(custom === 1) {
+      this.props.navigation.navigate('PlaceOrder', {productId: this.state.product.id, custom})
+    } else {
+      this.props.navigation.navigate('PlaceOrder', {productId: this.state.product.id, itemId, custom})
+    }
+  }
+
+  onItemChoose(item) {
+    this.setState({
+      item
+    })
   }
 
   render() {
-    let {product} = this.state
+    let {product, item} = this.state
     return (
-      <View>
+      <ScrollView>
         {
           product.id && <View style={styles.productInfo}>
             {
@@ -101,6 +137,9 @@ class Product extends React.Component {
               <Text style={styles.name}>{product.name}</Text>
               <Text style={styles.summary}>{product.summary}</Text>
             </View>
+            <View>
+              <Selector items={this.state.items} selected={item} onItemSelected={(item) => {this.onItemChoose(item)}}/>
+            </View>
             <View style={styles.detail}>
               <Text>详情</Text>
             </View>
@@ -109,9 +148,14 @@ class Product extends React.Component {
         <View style={styles.operation}>
           <Image source={cartIcon} style={styles.shoppingCart}/>
           <Button title="去定制" onPress={() => this.placeOrder(1)}/>
-          <Button title="去下单" onPress={() => this.placeOrder(0)}/>
+          {
+            item ? 
+            <Button title="去下单" onPress={() => this.placeOrder(0)}/>
+            :
+            <Button title="去下单" disabled/>
+          }
         </View>
-      </View>
+      </ScrollView>
     );
   }
 }

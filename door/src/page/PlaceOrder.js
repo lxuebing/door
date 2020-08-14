@@ -77,6 +77,9 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 20,
     color: 'red',
+  },
+  productSummary: {
+
   }
 });
 
@@ -127,7 +130,7 @@ class PlaceOrder extends React.Component {
   }
 
   isCustom() {
-    return this.props.route && this.props.route.params && this.props.route.params.custom && this.props.route.params.custom === 1
+    return this.props.route && this.props.route.params && !this.props.route.params.itemId
   }
 
   componentDidMount() {
@@ -244,6 +247,7 @@ class PlaceOrder extends React.Component {
                   <View style={styles.productDetail}>
                     <Text style={styles.productName}>{product.name}</Text>
                     <Text style={styles.productPrice}>￥{product.price}</Text>
+                    <Text style={styles.productSummary}>{product.summary}</Text>
                   </View>
                 </View>
             </TouchableHighlight>

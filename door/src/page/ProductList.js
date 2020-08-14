@@ -39,6 +39,9 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 20,
     color: 'red',
+  },
+  productSummary: {
+
   }
 });
 
@@ -101,6 +104,7 @@ class ProductList extends React.Component {
                   <View style={styles.productDetail}>
                     <Text style={styles.productName}>{item.name}</Text>
                     <Text style={styles.productPrice}>￥{item.price}</Text>
+                    <Text style={styles.productSummary}>{item.summary}</Text>
                   </View>
                 </View>
               </TouchableHighlight>

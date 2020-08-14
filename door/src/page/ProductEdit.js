@@ -100,14 +100,10 @@ class ProductEdit extends React.Component {
       } else {
         const source = { uri: response.uri , type: response.type, name: response.fileName};
         console.log("source:" + source)
-        uploadImg(source).then(res => {
-          let data = res.data
-          console.log("上传成功：", data)
+        uploadImg(source, res => {
           let imgs = this.state.imgs || []
-          imgs.push(data.data)
+          imgs.push(res.data)
           this.setState({imgs})
-        }).catch(err => {
-          console.log("上传失败：", err)
         })
       }
       
@@ -137,8 +133,13 @@ class ProductEdit extends React.Component {
     get('/api/product/detail', {id: this.props.route.params.productId}, res => {
       console.log("商品详情", res)
       this.setState({
-        product: res.data,
-        imgs: res.images
+        product: res.data
+      })
+    })
+    get('/api/product/image/list', {productId: this.props.route.params.productId}, res => {
+      console.log("商品图片", res)
+      this.setState({
+        imgs: res.data
       })
     })
   }
@@ -190,7 +191,7 @@ class ProductEdit extends React.Component {
         </View>
         <View style={styles.row}>
           <Text>简介：</Text>
-          <TextInput style={styles.input} defaultValue={product.summary}/>
+          <TextInput style={styles.input} multiline={true} defaultValue={product.summary}  onChangeText={summary => this.changeState({summary})}/>
         </View>
         <View style={styles.row}>
           <Text>图片：</Text>
@@ -203,10 +204,10 @@ class ProductEdit extends React.Component {
             <Image style={styles.img} source={addImg} />
           </TouchableHighlight>
         </View>
-        <View style={styles.row}>
+        {/* <View style={styles.row}>
           <Text>详情：</Text>
           <TextInput placeholder={'输入产品详情'} defaultValue={product.detail}/>
-        </View>
+        </View> */}
         <View style={styles.row}>
           <Button title={'保存'} onPress={() => this.save()} />
           {/* <Button title={'立即发布'} /> */}

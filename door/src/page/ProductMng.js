@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     height: 150
   },
   productDetail: {
+    flex: 1
   },
   productName: {
     fontSize: 24
@@ -58,16 +59,18 @@ class ProductMng extends React.Component {
     console.log("删除商品：", item.name)
   }
 
-  loadMore() {
-    // todo: 滑动至底部时加载下一页
-  }
-
-  componentDidMount() {
+  loadMore(start) {
     get('/api/product/list', {}, res => {
       console.log("商品列表", res)
       this.setState({
         productList: res.data
       })
+    })
+  }
+
+  componentDidMount() {
+    this.props.navigation.addListener('focus', () => {
+      this.loadMore()
     })
   }
 
@@ -90,8 +93,10 @@ class ProductMng extends React.Component {
                   />
                   <View style={styles.productDetail}>
                     <Text style={styles.productName}>{item.name}</Text>
-                    <Text>商品简介</Text>
                     <Text style={styles.productPrice}>￥{item.price}</Text>
+                    <Text>{item.summary}</Text>
+                  </View>
+                  <View style={styles.options}>
                     <Button onPress={() => this.onDelete(item)} title="删除"/>
                   </View>
                 </View>
