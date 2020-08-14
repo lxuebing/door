@@ -53,26 +53,18 @@ class ShoppingCart extends React.Component {
   }
 
   componentDidMount() {
-    this.loadOrderList()
+    this.props.navigation.addListener('focus', () => {
+      this.loadOrderList()
+    })
   }
 
   loadOrderList() {
-    get('/api/user/order/list')
-    .then((res) => {
-      console.log("订单列表", res.data)
-      if(res.data.code == 0) {
-        this.setState({
-          orderList: res.data.data
-        })
-      } else {
-        // todo: 报错
-        console.log("获取订单失败", res.data)
-      }
+    get('/api/user/order/list', {}, res => {
+      console.log("订单列表", res)
+      this.setState({
+        orderList: res.data
+      })
     })
-    .catch((error) => {
-      console.log("获取订单列表失败", error)
-    }
-  )
   }
 
   onItemClicked(item) {
@@ -81,13 +73,10 @@ class ShoppingCart extends React.Component {
 
   placeOrder(item) {
     console.log("下单", item)
-    get('/api/user/order/place', {orderId: item.id})
-    .then(res => {
+    get('/api/user/order/place', {orderId: item.id}, res => {
       console.log("下单结果",res.data)
       WToast.show({data: res.data.data})
       this.loadOrderList()
-    }).catch(err => {
-      console.log("下单出错", err)
     })
   }
 

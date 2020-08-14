@@ -1,11 +1,10 @@
 import React from 'react';
 import {StyleSheet, View, ScrollView, Text, Button, Image, TextInput, TouchableHighlight, Dimensions, DeviceEventEmitter} from 'react-native';
 import TreeView from './component/TreeView'
-import {get, request, uploadImg} from '../api/request'
+import {get, post, uploadImg} from '../api/request'
 import addImg from '../images/icons/addImg.png';
 import ImagePicker from 'react-native-image-picker'
 import DropDownPicker from 'react-native-dropdown-picker'
-import { Loading, EasyLoading } from 'react-native-easy-loading'
 import {WToast} from 'react-native-smart-tip'
 
 const styles = StyleSheet.create({
@@ -55,23 +54,13 @@ class CategoryMng extends React.Component {
   }
 
   loadCategoryTree() {
-    get('/api/category/all')
-    .then((res) => {
-      let data = res.data
-      console.log("品类树", data)
-      if(data.code === 0) {
-        let cates = data.data
-        this.setState({
-          categoryTree: cates,
-          cateList: this.toCateList(cates)
-        })
-      } else {
-        // todo: token错误提示
-        console.log("获取品类树失败", error)
-      }
-    })
-    .catch((error) => {
-      console.log("获取品类树失败", error)
+    get('/api/category/all', {}, res => {
+      console.log("品类树", res)
+      let cates = res.data
+      this.setState({
+        categoryTree: cates,
+        cateList: this.toCateList(cates)
+      })
     })
   }
 
@@ -97,20 +86,13 @@ class CategoryMng extends React.Component {
     let data = {
       name: this.state.name, 
       parentId: this.state.parentId, 
-      shortcut: "xxx"
+      shortcut: this.state.img
     }
     console.log("快速添加品类：", data)
-    request({url:'/api/manage/category/add', method:'POST', data})
-    .then(res => {
-      if(res.data.code === 0) {
-        console.log("添加品类成功", res.data)
-        this.loadCategoryTree()
-      } else {
-        console.log("添加品类失败", res.data)
-        WToast.show({data: res.data.data})
-      }
-    }).catch(err => {
-      console.log("添加品类失败", err)
+    post('/api/manage/category/add', data, res => {
+      console.log("添加品类成功", res.data)
+      WToast.show({data: "添加品类成功"})
+      this.loadCategoryTree()
     })
   }
 
@@ -136,19 +118,10 @@ class CategoryMng extends React.Component {
         console.log('customButton')
       } else {
         const source = { uri: response.uri , type: response.type, name: response.fileName};
-        console.log("source:" + source)
-        EasyLoading.show('图片上传中...')
-        uploadImg(source).then(res => {
-          let data = res.data
-          console.log("上传成功：", data)
-          this.setState({img: data.data})
-          EasyLoading.dismis()
-        }).catch(err => {
-          console.log("上传失败：", err)
-          EasyLoading.dismis()
+        uploadImg(source, res => {
+          this.setState({img: res.data})
         })
       }
-      
     });
   }
 
@@ -193,7 +166,6 @@ class CategoryMng extends React.Component {
             titleKey={'name'}
           />
         </View>
-        <Loading />
       </View>
     );
   }

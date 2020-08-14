@@ -69,23 +69,13 @@ class ProductList extends React.Component {
     if(productList && productList.length > 0) {
       query.startId = productList[productList.length-1].id
     }
-    get('/api/product/list', query)
-      .then((res) => {
+    get('/api/product/list', query, res => {
+        console.log("商品列表", res)
         let data = res.data
-        console.log("商品列表", data)
-        if(data.code == 0) {
-          this.setState({
-            productList: productList.concat(data.data)
-          })
-        } else {
-          // todo: 报错
-          console.log("错误:", data.msg)
-        }
-      })
-      .catch((error) => {
-        console.log("获取商品列表失败: ", error)
-      }
-    )
+        this.setState({
+          productList: productList.concat(data)
+        })
+    })
   }
 
   componentDidMount() {

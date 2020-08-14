@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text, Image, Button, TouchableHighlight, Dimensions} from 'react-native';
+import {StyleSheet, View, ScrollView, Text, Image, Button, TouchableHighlight, Dimensions} from 'react-native';
 import {formatTime} from '../utils/DateUtil'
 import {get} from '../api/request'
 
@@ -71,17 +71,9 @@ class OrderMng extends React.Component {
 
   setOrder(item) {
     console.log("向供应商订货", item)
-    get('/api/manage/order/set', {orderId: item.id})
-    .then(res => {
-      let data = res.data
-      if(data.code === 0) {
-        console.log("发起供应商订单", data)
-        this.loadOrderList()
-      } else {
-        console.log("发起供应商订单失败", data)
-      }
-    }).catch(err => {
-      console.log("发起供应商订单失败", err)
+    get('/api/manage/order/set', {orderId: item.id}, res => {
+      console.log("发起供应商订单", res)
+      this.loadOrderList()
     })
   }
 
@@ -90,23 +82,13 @@ class OrderMng extends React.Component {
   }
 
   loadOrderList() {
-    get('/api/manage/order/list')
-    .then((res) => {
-      let data = res.data
-      console.log("订单列表", data)
-      if(data.code == 0) {
-        this.setState({
-          orderList: data.data
-        })
-      } else {
-        // todo: 报错
-        console.log("获取订单列表失败", data)
-      }
+    get('/api/manage/order/list', {}, res => {
+      console.log("订单列表", res)
+      this.setState({
+        orderList: res.data
+      })
     })
-    .catch((error) => {
-      console.log("error: ", error)
-    }
-  )
+    
   }
 
   getStatus(item){
@@ -124,7 +106,7 @@ class OrderMng extends React.Component {
   render() {
     let {orderList} = this.state
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         {
           orderList && orderList.map((item,index) => (
             <View key={index}>
@@ -159,7 +141,7 @@ class OrderMng extends React.Component {
             </View>
           ))
         }
-      </View>
+      </ScrollView>
     );
   }
 }

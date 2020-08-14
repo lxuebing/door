@@ -5,7 +5,8 @@ import ImagePicker from 'react-native-image-picker'
 import DropDownPicker from 'react-native-dropdown-picker'
 
 import addImg from '../images/icons/addImg.png';
-import {get, request, uploadImg} from '../api/request'
+import {get, post, uploadImg} from '../api/request'
+import { WToast } from 'react-native-smart-tip';
 
 const styles = StyleSheet.create({
   text: {
@@ -48,10 +49,10 @@ class ProductEdit extends React.Component {
   }
 
   componentDidMount() {
+    this.loadCategorys()
     if(!this.props.route || !this.props.route.params || !this.props.route.params.productId) {
       return
     }
-    this.loadCategorys()
     this.loadProductDetail()
   }
 
@@ -65,10 +66,8 @@ class ProductEdit extends React.Component {
       images: imgs
     }
     console.log("保存商品信息：", data)
-    request({ method: 'POST', url, data }).then(res => {
-      console.log("成功", res.data)
-    }).catch(err => {
-      console.log("失败", err)
+    post(url, data, res => {
+      WToast.show({data: '保存成功'})
     })
   }
 
@@ -121,45 +120,27 @@ class ProductEdit extends React.Component {
   }
 
   loadCategorys() {
-    get('/api/category/all')
-    .then((res) => {
-      let data = res.data
-      console.log("品类树", data)
-      if(data.code === 0) {
-        let cates = data.data
-        let cateList = []
-        this.toDropListItems(cateList, {children:cates})
-        console.log(cateList)
-        this.setState({
-          cateList
-        })
-      } else {
-        // todo: token错误提示
-      }
+    get('/api/category/all', {}, res => {
+      console.log("品类树", res)
+      let cates = res.data
+      let cateList = []
+      this.toDropListItems(cateList, {children:cates})
+      console.log(cateList)
+      this.setState({
+        cateList
+      })
     })
-    .catch((error) => {
-      console.log("获取品类树失败", error)
-    })
+  
   }
 
   loadProductDetail() {
-    get('/api/product/detail', {id: this.props.route.params.productId})
-      .then((res) => {
-        let data = res.data
-        console.log("商品详情", data)
-        if(data.code == 0) {
-          this.setState({
-            product: data.data,
-            imgs: data.images
-          })
-        } else {
-          console.log("获取商品详情失败: ", data)
-        }
+    get('/api/product/detail', {id: this.props.route.params.productId}, res => {
+      console.log("商品详情", res)
+      this.setState({
+        product: res.data,
+        imgs: res.images
       })
-      .catch((error) => {
-        console.log("error: ", error)
-      }
-    )
+    })
   }
 
   toDropListItems(list, node) {

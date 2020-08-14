@@ -1,6 +1,7 @@
 import React from 'react';
 import {DeviceEventEmitter, StyleSheet, View, Image, ImageBackground, Text, TouchableHighlight} from 'react-native';
 import avatar from '../images/images/avatar.jpg';
+import {removeToken, storage} from '../api/storage'
 
 const styles = StyleSheet.create({
   text: {
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
   }
 });
 
-class UserMng extends React.Component {
+class User extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -51,8 +52,7 @@ class UserMng extends React.Component {
         username: 'zhangsan',
         nickname: '张三',
         role: 1
-      },
-      mode: 1
+      }
     };
   }
 
@@ -68,6 +68,11 @@ class UserMng extends React.Component {
     DeviceEventEmitter.emit('switchMode', {})
   }
 
+  logout() {
+    removeToken()
+    this.props.navigation.navigate('Login')
+  }
+
   render() {
     let {userInfo, mode} = this.state
     return (
@@ -78,16 +83,24 @@ class UserMng extends React.Component {
           <View style={styles.userDetail}>
             <Text style={styles.text}>{userInfo.nickname}</Text>
             <Text style={styles.text}>{userInfo.username}</Text>
-            <Text>管理模式</Text>
-            <TouchableHighlight onPress={ (e) => this.switchMode() }>
-              <Text style={styles.linkButton}>切换至客户模式</Text>
+            {
+              userInfo.role == 1 &&
+              <>
+                <Text>管理模式</Text>
+                <TouchableHighlight onPress={ (e) => this.switchMode() }>
+                  <Text style={styles.linkButton}>切换至客户模式</Text>
+                </TouchableHighlight>
+              </>
+            }
+            <TouchableHighlight onPress={ (e) => this.logout() }>
+              <Text style={styles.linkButton}>退出登录</Text>
             </TouchableHighlight>
             
           </View>
         </ImageBackground>
         <TouchableHighlight onPress = { (e) => this.onMenuSelected({name: '我的订单'}) }>
           <View style={styles.menu}>
-            <Text style={styles.menuText}>自定义菜单</Text>
+            <Text style={styles.menuText}>我的订单</Text>
           </View>
         </TouchableHighlight>
       </View>
@@ -95,6 +108,6 @@ class UserMng extends React.Component {
   }
 }
 
-UserMng.propTypes = {};
+User.propTypes = {};
 
-export default UserMng;
+export default User;

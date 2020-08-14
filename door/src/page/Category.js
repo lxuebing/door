@@ -55,44 +55,25 @@ class Category extends React.Component {
 
   loadSecondCateList(cate) {
     console.log("1级品类: " + cate.id + cate.name)
-    get('/api/category/list', {root: cate.id})
-      .then((res) => {
-        let data = res.data
-        console.log("加载二级品类", data)
-        if(data.code === 0) {
-          let cates = data.data
-          this.setState({
-            secondCates: cates
-          })
-        } else {
-          // todo: token错误提示
-          console.log("错误", data)
-        }
+    get('/api/category/list', {root: cate.id}, res => {
+      console.log("加载二级品类", res)
+      let cates = res.data
+      this.setState({
+        secondCates: cates
       })
-      .catch((error) => {
-        console.log("获取二级品类失败", error)
-      })
+      
+    })
   }
 
   componentDidMount() {
-    get('/api/category/list', {root: 0})
-      .then((res) => {
-        let data = res.data
-        console.log("一级品类", data)
-        if(data.code === 0) {
-          let cates = data.data
-          this.setState({
-            firstCates: cates
-          })
-          if(cates && cates.length > 0) this.loadSecondCateList(cates[0])
-        } else {
-          // todo: token错误提示
-          console.log("错误", data)
-        }
+    get('/api/category/list', {root: 0}, res => {
+      console.log("一级品类", res)
+      let cates = res.data
+      this.setState({
+        firstCates: cates
       })
-      .catch((error) => {
-        console.log("获取一级品类失败", error)
-      })
+      if(cates && cates.length > 0) this.loadSecondCateList(cates[0])
+    })
   }
 
   render() {

@@ -1,5 +1,7 @@
-import { saveToken, storage } from './storage';
+import { storage } from './storage';
+import {DeviceEventEmitter} from 'react-native'
 import axios from 'axios'
+import { WToast } from 'react-native-smart-tip';
 const qs = require('qs');
 
 const BASE_URL = 'https://www.lemonlog.wang/api/shop';
@@ -19,67 +21,70 @@ function shouldFilter(url) {
     return false
 }
 
-function requestWithToken({ url, method, headers, params, data}) {
-  return new Promise((resolve, reject) => {
-    storage.load({key: 'token'}).then(token => {
-      axios({
-        method,
-        url,
-        headers: {...headers, token},
-        data
-      }).then(res => {
-        resolve(res)
-      }).catch(err => {
-        reject(err)
-      })
-    }).catch(err => {
-        // todo 没有找到，跳转登录
-        reject(err)
-    })
+function doRequest({ url, method, headers, data, callback, fail}) {
+  axios({ url, method, headers, data, callback}).then(res => {
+    let data = res.data 
+    if(data.code === 0) {
+      callback(data)
+    } else {
+      WToast.show({data: data.data})
+      if(fail) fail(res)
+    }
+  }).catch(err => {
+    console.log('请求出错:', err)
+    WToast.show({data: '请求出错'})
+    if(fail) fail(err)
   })
-};
+}
 
-/**
- * 请求 API 接口
- *
- * @param {Object} options
- * @param {string} options.url - 接口地址
- * @param {string} options.method - 请求类型
- * @param {Object} options.headers - 请求头
- * @param {Object} options.params - url 参数
- * @param {Object} options.data - 请求体数据
- */
-export function request({ url, method, headers, params, data}) {
+export function request({ url, method, headers, params, data}, callback, fail, navigation) {
   let completeUrl = BASE_URL + url;
   if (params) {
     completeUrl = completeUrl + '?' + paramsSerializer(params);
   }
   console.log("发起请求：", completeUrl)
   if(shouldFilter(url)) {
-    return requestWithToken({ url: completeUrl, method, headers, params, data})
+    storage.load({key: 'token'}).then(token => {
+      doRequest({url: completeUrl, method, 
+        headers: {...headers, token},
+        data, callback, fail})
+    }).catch(err => {
+      console.log("未找到", err)
+      WToast.show({data: '您还没有登录'})
+      if(fail) fail(err)
+    })
   } else {
-    return axios({url:completeUrl, method, headers, data})
+    doRequest({url: completeUrl, method, headers, data, callback, fail})
   }
+  
 }
 
-export function get(url, params) {
-    return request({ url, params, method:'GET'})
+export function get(url, params, callback, fail, navigation) {
+    return request({ url, params, method:'GET'}, callback, fail, navigation)
 }
 
-export function post(url, data) {
-  return request({url, data, method:'POST'})
+export function post(url, data, callback, fail, navigation) {
+  return request({url, data, method:'POST'}, callback, fail, navigation)
 }
 
-export function uploadImg(img) {
+export function uploadImg(img, callback) {
+  console.log("source:" + img)
+  DeviceEventEmitter.emit('loading', {msg: "图片上传中..."})
   let formData = new FormData()
   formData.append("file", img)
-  return request({
+  request({
     method: 'POST',
     url: '/api/manage/resource/qiniu/upload',
     headers: {
       'Content-Type': 'multipart/form-data'
     },
     data: formData
+  }, res => {
+    console.log("上传结果", res)
+    DeviceEventEmitter.emit('dismis', {})
+    callback(res)
+  }, err => {
+    DeviceEventEmitter.emit('dismis', {})
   })
 }
 

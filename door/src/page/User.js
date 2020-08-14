@@ -52,8 +52,7 @@ class User extends React.Component {
         username: 'zhangsan',
         nickname: '张三',
         role: 1
-      },
-      mode: 1
+      }
     };
   }
 

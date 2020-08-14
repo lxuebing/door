@@ -61,23 +61,13 @@ class Product extends React.Component {
       return
     }
     let {productId} = this.props.route.params
-    get('/api/product/detail', {id: productId})
-      .then((res) => {
-        let data = res.data
-        console.log("商品详情", data)
-        if(data.code == 0) {
-          this.setState({
-            product: data.data
-          })
-        } else {
-          // todo: 报错
-          console.log("获取商品失败：", data.msg)
-        }
-      })
-      .catch((error) => {
-        console.log("获取商品失败: ", error)
-      }
-    )
+    get('/api/product/detail', {id: productId}, res => {
+        console.log("商品详情", res)
+        this.setState({
+          product: res.data
+        })
+    })
+      
   }
 
   componentDidMount() {

@@ -106,40 +106,22 @@ class PlaceOrder extends React.Component {
       return
     }
     let {productId} = this.props.route.params
-    get('/api/product/detail', {id: productId})
-      .then((res) => {
-        let data = res.data
-        console.log("商品详情", data)
-        if(data.code == 0) {
-          this.setState({
-            product: data.data
-          })
-        } else {
-          // todo: 报错
-          console.log("获取商品失败：", data.msg)
-        }
+    get('/api/product/detail', {id: productId}, res => {
+      console.log("商品详情", res)
+      this.setState({
+        product: res.data
       })
-      .catch((error) => {
-        console.log("获取商品失败: ", error)
-      }
-    )
+    })
   }
 
   getItemDetail() {
     if(!this.isCustom() && this.props.route.params.itemId) {
-        get('/api/product/item', {itemId: this.props.route.params.itemId})
-        .then(res => {
-            let data = res.data
-            console.log("获取商品item", data)
-            if(data.code === 0) {
-                this.setState({
-                    item: data.data
-                })
-            } else {
-                console.log("获取商品item失败")
-            }
-        }).catch(err => {
-            console.log("获取商品item失败")
+        get('/api/product/item', {itemId: this.props.route.params.itemId}, data => {
+          console.log("获取商品item", data)
+            this.setState({
+                item: data.data
+            })
+         
         })
     }
   }
@@ -179,35 +161,41 @@ class PlaceOrder extends React.Component {
   addOrder() {
     console.log("提交订单")
     let {product, color, open, custom, width, height, count, item} = this.state
+    if(!product) {
+      WToast.show({data: '未选择商品'})
+      return
+    }
+    if(!count) count = 1
     let data = {productId: product.id, count, custom}
     if(custom === 1) {
-        data = {
-            ...data,
-            params: {
-                color: color.value,
-                open: open.value,
-                width,
-                height
-            }
-        }
+      if(!color || !open || !width || !height || !count) {
+        WToast.show({data: '请把订单填写完整'})
+        return
+      }
+      data = {
+          ...data,
+          params: {
+              color: color.value,
+              open: open.value,
+              width,
+              height
+          }
+      }
     } else {
-        data = {...data,
-            itemId: item.id,
-            params: item.params
-        }
+      if(!item || !count) {
+        WToast.show({data: '请把订单填写完整'})
+        return
+      }
+      data = {...data,
+          itemId: item.id,
+          params: item.params
+      }
     }
     console.log("提交订单数据", data) 
-    post('/api/user/order/add', data)
-    .then(res => {
-        let data = res.data 
-        console.log("提交订单结果", data)
-        if(data.code === 0) {
-            WToast.show({data:"已提交订单"})
-        } else {
-            WToast.show({data:data.data})
-        }
-    }).catch(err => {
-        console.log("提交订单失败", err)
+    post('/api/user/order/add', data, res => {
+      console.log("提交订单结果", res)
+      WToast.show({data:"已提交订单"})
+      this.props.navigation.goBack()
     })
   }
 
