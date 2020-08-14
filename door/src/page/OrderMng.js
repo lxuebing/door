@@ -62,7 +62,7 @@ class OrderMng extends React.Component {
 
   onItemClicked(item) {
     console.log("选择订单: ", item.id)
-    // todo: 将订单标记为已下单（人工）
+    this.props.navigation.navigate('OrderDetail', {orderId: item.id})
   }
 
   loadMore() {

@@ -69,6 +69,7 @@ class ShoppingCart extends React.Component {
 
   onItemClicked(item) {
     console.log("点击订单：", item)
+    this.props.navigation.navigate('OrderDetail', {orderId: item.id})
   }
 
   placeOrder(item) {

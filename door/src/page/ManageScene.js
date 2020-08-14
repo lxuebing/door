@@ -18,6 +18,8 @@ import CategoryMng from './CategoryMng';
 import OrderMng from './OrderMng';
 import UserMng from './UserMng';
 import ProductEdit from './ProductEdit';
+import OrderDetail from './OrderDetail';
+import Login from './Login';
 
 const styles = StyleSheet.create({
   icon: {
@@ -95,6 +97,8 @@ export default class ManageScene extends React.Component {
           <Stack.Navigator>
             <Stack.Screen name="ManageTab" component={ManageTab} options={{title:'搜索'}}/>
             <Stack.Screen name="ProductEdit" component={ProductEdit} options={{title:'商品编辑'}}/>
+            <Stack.Screen name="OrderDetail" component={OrderDetail} options={{title:'订单详情'}}/>
+            <Stack.Screen name="Login" component={Login} options={{title:'登录'}}/>
           </Stack.Navigator>
         </NavigationContainer> 
       )

@@ -21,6 +21,7 @@ import ProductList from './ProductList';
 import Product from './Product';
 import PlaceOrder from './PlaceOrder';
 import Login from './Login';
+import OrderDetail from './OrderDetail';
 
 const styles = StyleSheet.create({
   icon: {
@@ -82,6 +83,7 @@ export default class MainScene extends React.Component {
             <Stack.Screen name="Product" component={Product} options={{title:'商品详情'}}/>
             <Stack.Screen name="PlaceOrder" component={PlaceOrder} options={{title:'下单'}}/>
             <Stack.Screen name="Login" component={Login} options={{title:'登录'}}/>
+            <Stack.Screen name="OrderDetail" component={OrderDetail} options={{title:'订单详情'}}/>
           </Stack.Navigator>
         </NavigationContainer>
       );

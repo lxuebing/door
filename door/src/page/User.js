@@ -1,7 +1,10 @@
 import React from 'react';
 import {DeviceEventEmitter, StyleSheet, View, Image, ImageBackground, Text, TouchableHighlight} from 'react-native';
-import avatar from '../images/images/avatar.jpg';
+import avatar from '../images/icons/user.png';
 import {removeToken} from '../api/storage'
+import axios from 'axios';
+import { storage } from '../api/storage';
+import { WToast } from 'react-native-smart-tip';
 
 const styles = StyleSheet.create({
   text: {
@@ -47,13 +50,27 @@ class User extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userInfo: {
-        id: 1,
-        username: 'zhangsan',
-        nickname: '张三',
-        role: 1
-      }
     };
+  }
+
+  getProfile() {
+    storage.load({key: 'token'}).then(token => {
+      axios.get('https://www.lemonlog.wang/user/api/profile', {headers: {token}})
+      .then(res => {
+        let data = res.data
+        console.log("用户信息", data)
+        this.setState({
+          userInfo: data.data
+        })
+      })
+      .catch( err => {
+        console.log("获取用户信息失败", err)
+      })
+    }).catch(err => {
+      console.log("未找到", err)
+      WToast.show({data: '您还没有登录'})
+    })
+    
   }
 
   onMenuSelected(menu) {
@@ -70,7 +87,14 @@ class User extends React.Component {
 
   logout() {
     removeToken()
+    this.setState({userInfo:null})
     this.props.navigation.navigate('Login')
+  }
+
+  componentDidMount() {
+    this.props.navigation.addListener('focus', () => {
+      this.getProfile()
+    })
   }
 
   render() {
@@ -79,28 +103,35 @@ class User extends React.Component {
       <View>
         <ImageBackground style={styles.userInfo}
         source={require('../images/images/bk.jpg')}>
-          <Image source={avatar} style={styles.avatar} />
+          <Image source={ userInfo ? {uri: userInfo.avatar}:avatar} style={styles.avatar} />
           <View style={styles.userDetail}>
-            <Text style={styles.text}>{userInfo.nickname}</Text>
-            <Text style={styles.text}>{userInfo.username}</Text>
+            <Text style={styles.text}>{userInfo && userInfo.nickname}</Text>
+            <Text style={styles.text}>{userInfo && userInfo.username}</Text>
+            <Text>客户模式</Text>
             {
-              userInfo.role == 1 &&
+              userInfo && userInfo.role == 10 &&
               <>
-                <Text>客户模式</Text>
                 <TouchableHighlight onPress={ (e) => this.switchMode() }>
                   <Text style={styles.linkButton}>切换至管理模式</Text>
                 </TouchableHighlight>
               </>
             }
-            <TouchableHighlight onPress={ (e) => this.logout() }>
-              <Text style={styles.linkButton}>退出登录</Text>
-            </TouchableHighlight>
+            {
+              userInfo ? 
+              <TouchableHighlight onPress={ (e) => this.logout() }>
+                <Text style={styles.linkButton}>退出登录</Text>
+              </TouchableHighlight>
+              :
+              <TouchableHighlight onPress={ (e) => this.logout() }>
+                <Text style={styles.linkButton}>登录</Text>
+              </TouchableHighlight>
+            }
             
           </View>
         </ImageBackground>
         <TouchableHighlight onPress = { (e) => this.onMenuSelected({name: '我的订单'}) }>
           <View style={styles.menu}>
-            <Text style={styles.menuText}>我的订单</Text>
+            <Text style={styles.menuText}>个人信息</Text>
           </View>
         </TouchableHighlight>
       </View>

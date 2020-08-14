@@ -151,9 +151,9 @@ class PlaceOrder extends React.Component {
     })
   }
 
-  onOpenwayChoose(open) {
+  onOpenwayChoose(openway) {
       this.setState({
-        open
+        openway
       })
   }
 
@@ -163,7 +163,7 @@ class PlaceOrder extends React.Component {
 
   addOrder() {
     console.log("提交订单")
-    let {product, color, open, custom, width, height, count, item} = this.state
+    let {product, color, openway, custom, width, height, count, item} = this.state
     if(!product) {
       WToast.show({data: '未选择商品'})
       return
@@ -171,7 +171,7 @@ class PlaceOrder extends React.Component {
     if(!count) count = 1
     let data = {productId: product.id, count, custom}
     if(custom === 1) {
-      if(!color || !open || !width || !height || !count) {
+      if(!color || !openway || !width || !height || !count) {
         WToast.show({data: '请把订单填写完整'})
         return
       }
@@ -179,7 +179,7 @@ class PlaceOrder extends React.Component {
           ...data,
           params: {
               color: color.value,
-              open: open.value,
+              openway: openway.value,
               width,
               height
           }
@@ -203,7 +203,7 @@ class PlaceOrder extends React.Component {
   }
 
   getParams() {
-    let {product, color, open, custom, item} = this.state
+    let {product, color, openway, custom, item} = this.state
     if(custom === 0) {
         return (
             <View style={styles.parms}>
@@ -219,7 +219,7 @@ class PlaceOrder extends React.Component {
             </View>
             <View style={styles.row}>
                 <Text>开向：</Text>
-                <Selector items={this.state.openways} selected={open} onItemSelected={(open) => {this.onOpenwayChoose(open)}}/>
+                <Selector items={this.state.openways} selected={openway} onItemSelected={(openway) => {this.onOpenwayChoose(openway)}}/>
             </View>
             <View style={styles.row}>
                 <Text>尺寸：</Text>
