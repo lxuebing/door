@@ -120,8 +120,8 @@ export default class ItemMng extends React.Component {
             {
                 items && items.map((item, index) => {
                     return (
-                        <View style={styles.item}>
-                            <Text style={styles.itemText} key={index}>{buildParamsString(item.params)}</Text>
+                        <View key={index} style={styles.item}>
+                            <Text style={styles.itemText} >{buildParamsString(item.params)}</Text>
                             <Button title={'删除'} onPress={() => this.delete(item)}/>
                         </View>
                     )

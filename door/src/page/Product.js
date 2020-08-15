@@ -1,11 +1,12 @@
 import React from 'react';
-import {StyleSheet, View, ScrollView, Image, Button, Text, TouchableHighlight} from 'react-native';
+import {StyleSheet, View, ScrollView, Image, Button, Text, TouchableHighlight, Dimensions} from 'react-native';
 import Swiper from 'react-native-swiper';
 import {get} from '../api/request'
 import Selector from './component/Selector'
 import {buildParamsString} from '../utils/StringUtil'
 
 import cartIcon from '../images/icons/cart.png';
+const {width} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   text: {
@@ -13,14 +14,20 @@ const styles = StyleSheet.create({
   },
   productInfo: {
   },
-  swiper: {
-    width: 200,
+  swiperWrapper: {
     height: 200,
-    borderWidth: 10,
-    borderColor: 'red'
+    width: width,
   },
-  swiperImg: {
-    height: 300,
+  wrapper: {},
+  slide: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'silver'
+  },
+  slideImg: {
+    width: width,
+    height: 200,
   },
   baseInfo: {
     padding: 10,
@@ -71,7 +78,12 @@ class Product extends React.Component {
         })
         this.getItems(productId)
     })
-      
+    get('/api/product/image/list', {productId}, res => {
+      console.log("商品图片", res.data)
+      this.setState({
+        images: res.data
+      })
+    })
   }
 
   getItems(productId) {
@@ -123,15 +135,25 @@ class Product extends React.Component {
   }
 
   render() {
-    let {product, item} = this.state
+    let {product, item, images} = this.state
     return (
       <ScrollView>
         {
           product.id && <View style={styles.productInfo}>
-            {
-              // 这里应该放轮播，但没有好用的插件，react-native-swiper是个弟弟
-            }
-            <Image style={styles.swiperImg} source={{uri: "https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=151472226,3497652000&fm=26&gp=0.jpg"}}/>
+            <View style={styles.swiperWrapper}>
+              {
+                images && 
+                <Swiper style={styles.wrapper} autoplay>
+                  {
+                    images.map((img, index) => (
+                      <View key={index} style={styles.slide}>
+                        <Image source={{uri: img}} style={styles.slideImg} />
+                      </View>
+                    )) 
+                  }
+                </Swiper>
+              }
+            </View>
             <View style={styles.baseInfo}>
               <Text style={styles.price}>{product.price && '￥' + product.price}</Text>
               <Text style={styles.name}>{product.name}</Text>
