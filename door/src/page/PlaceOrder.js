@@ -90,15 +90,8 @@ class PlaceOrder extends React.Component {
       product: {
       },
       colors: [
-          {key: 1, value:'红色'},
-          {key: 2, value:'黑色'},
-          {key: 3, value:'白色'}
       ],
       openways: [
-          {key: 1, value: '内左'},
-          {key: 2, value: '内右'},
-          {key: 3, value: '外左'},
-          {key: 4, value: '外右'},
       ],
       count: 1
     };
@@ -129,11 +122,25 @@ class PlaceOrder extends React.Component {
     }
   }
 
+  loadDict() {
+    get('/api/dict/color', {}, res => {
+        this.setState({
+            colors: res.data
+        })
+    })
+    get('/api/dict/openway', {}, res => {
+      this.setState({
+          openways: res.data
+      })
+    })
+  }
+
   isCustom() {
     return this.props.route && this.props.route.params && !this.props.route.params.itemId
   }
 
   componentDidMount() {
+    this.loadDict()
     this.props.navigation.addListener('focus', () => {
       this.getProductDetail()
       this.getItemDetail()
