@@ -27,8 +27,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   productImg: {
-    width: 150,
-    height: 150
+    width: 120,
+    height: 120
   },
   productDetail: {
   },

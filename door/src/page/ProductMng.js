@@ -21,20 +21,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginBottom: 5,
     flexDirection: 'row',
-    height: 150
+    height: 100
   },
   productImg: {
-    width: 150,
-    height: 150
+    width: 100,
+    height: 100
   },
   productDetail: {
     flex: 1
   },
   productName: {
-    fontSize: 24
+    fontSize: 20
   },
   productPrice: {
-    fontSize: 20,
+    fontSize: 16,
     color: 'red',
   },
   productSummary: {

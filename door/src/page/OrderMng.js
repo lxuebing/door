@@ -31,23 +31,21 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: 'white',
     marginBottom: 5,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    height: 122
   },
   productImg: {
-    width: 150,
-    height: 150
+    width: 120,
+    height: 120
   },
   productDetail: {
     flex: 1,
   },
   productName: {
-    fontSize: 30
-  },
-  productName: {
-    fontSize: 24
+    fontSize: 20
   },
   productPrice: {
-    fontSize: 20,
+    fontSize: 16,
     color: 'red',
   }
 });
