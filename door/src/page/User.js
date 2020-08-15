@@ -1,6 +1,7 @@
 import React from 'react';
-import {DeviceEventEmitter, StyleSheet, View, Image, ImageBackground, Text, TouchableHighlight} from 'react-native';
-import avatar from '../images/icons/user.png';
+import {DeviceEventEmitter, StyleSheet, View, Image, Button, ImageBackground, Text, TouchableHighlight} from 'react-native';
+import avatar from '../images/icons/user.png'
+import login from '../images/icons/login.png'
 import {removeToken} from '../api/storage'
 import axios from 'axios';
 import { storage } from '../api/storage';
@@ -28,10 +29,20 @@ const styles = StyleSheet.create({
     
   },
   userDetail: {
-    padding: 10
+    padding: 10,
+    flex: 1
+  },
+  nickname: {
+    fontSize: 20,
+    fontWeight: 'bold'
+  },
+  username: {
+    fontSize: 16,
+    fontWeight: 'bold'
   },
   linkButton: {
-    color: 'blue'
+    color: 'blue',
+    fontWeight: 'bold'
   },
   menu: {
     height: 60,
@@ -43,6 +54,14 @@ const styles = StyleSheet.create({
   },
   menuText: {
     fontSize: 25,
+  },
+  mode: {
+    backgroundColor: 'rgba(255,255,255,0.5)',
+    padding: 5,
+    borderRadius: 5,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
   }
 });
 
@@ -50,6 +69,11 @@ class User extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      userInfo: {
+        id: -1,
+        nickname: "游客",
+        username: "anonymous"
+      }
     };
   }
 
@@ -87,7 +111,7 @@ class User extends React.Component {
 
   logout() {
     removeToken()
-    this.setState({userInfo:null})
+    this.setState({userInfo:{}})
     this.props.navigation.navigate('Login')
   }
 
@@ -103,30 +127,25 @@ class User extends React.Component {
       <View>
         <ImageBackground style={styles.userInfo}
         source={require('../images/images/bk.jpg')}>
-          <Image source={ userInfo ? {uri: userInfo.avatar}:avatar} style={styles.avatar} />
+          <Image source={ userInfo.avatar ? {uri: userInfo.avatar}:avatar} style={styles.avatar} />
           <View style={styles.userDetail}>
-            <Text style={styles.text}>{userInfo && userInfo.nickname}</Text>
-            <Text style={styles.text}>{userInfo && userInfo.username}</Text>
-            <Text>客户模式</Text>
+            <Text style={styles.nickname}>{userInfo && userInfo.nickname}</Text>
+            <Text style={styles.username}>{userInfo && userInfo.username}</Text>
             {
               userInfo && userInfo.role == 10 &&
               <>
+              <View style={styles.mode}>
+                <Text style={{color: "black", fontSize: 16, fontWeight: 'bold'}}>客户模式</Text>
                 <TouchableHighlight onPress={ (e) => this.switchMode() }>
-                  <Text style={styles.linkButton}>切换至管理模式</Text>
+                  <Text style={styles.linkButton} >切换至管理模式</Text>
                 </TouchableHighlight>
+              </View>
               </>
             }
-            {
-              userInfo ? 
-              <TouchableHighlight onPress={ (e) => this.logout() }>
-                <Text style={styles.linkButton}>退出登录</Text>
-              </TouchableHighlight>
-              :
-              <TouchableHighlight onPress={ (e) => this.logout() }>
-                <Text style={styles.linkButton}>登录</Text>
-              </TouchableHighlight>
-            }
             
+          </View>
+          <View style={{padding: 10}} >
+              <Button title={userInfo && userInfo.id > 0 ? "退出登录" : "登录"} onPress={ (e) => this.logout() }/>
           </View>
         </ImageBackground>
         <TouchableHighlight onPress = { (e) => this.onMenuSelected({name: '我的订单'}) }>
@@ -138,7 +157,5 @@ class User extends React.Component {
     );
   }
 }
-
-User.propTypes = {};
 
 export default User;

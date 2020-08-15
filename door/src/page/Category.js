@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text, Image, TouchableHighlight, Dimensions} from 'react-native';
+import {StyleSheet, View, ScrollView, Text, Image, TouchableHighlight, Dimensions} from 'react-native';
 import {get} from '../api/request'
 
 const styles = StyleSheet.create({
@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   sidebar: {
     height: Dimensions.get('window').height,
     backgroundColor: 'silver',
-    width: 150
+    width: 120
   },
   content: {
     flex:1,
@@ -90,17 +90,19 @@ class Category extends React.Component {
           ))}
         </View>
         
-        <View style={styles.content}>
-          {  secondCates && secondCates.map((cate,index) => (
-            <TouchableHighlight key={index} onPress = { (e) => this.onSecondCateClicked(cate) }>
-              <View style={styles.categoryItem}>
-                <Image source={{uri:cate.shortcut}} style={styles.img} />
-                <Text style={styles.text}>{cate.name}</Text>
-              </View>
-            </TouchableHighlight>
-          ))}
-          
-        </View>
+        <ScrollView>
+          <View style={styles.content}>
+            {  secondCates && secondCates.map((cate,index) => (
+              <TouchableHighlight key={index} onPress = { (e) => this.onSecondCateClicked(cate) }>
+                <View style={styles.categoryItem}>
+                  <Image source={{uri:cate.shortcut}} style={styles.img} />
+                  <Text style={styles.text}>{cate.name}</Text>
+                </View>
+              </TouchableHighlight>
+            ))}
+            
+          </View>
+        </ScrollView>
       </View>
     );
   }
