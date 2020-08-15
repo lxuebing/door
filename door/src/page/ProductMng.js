@@ -18,7 +18,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: 'white',
     marginBottom: 5,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    height: 150
   },
   productImg: {
     width: 150,
@@ -33,6 +34,10 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 20,
     color: 'red',
+  },
+  productSummary: {
+    flex: 1,
+    overflow: 'hidden'
   }
 });
 
@@ -120,7 +125,7 @@ class ProductMng extends React.Component {
                   <View style={styles.productDetail}>
                     <Text style={styles.productName}>{item.name}</Text>
                     <Text style={styles.productPrice}>￥{item.price}</Text>
-                    <Text>{item.summary}</Text>
+                    <Text style={styles.productSummary}>{item.summary}</Text>
                     <Text>{this.getStatus(item)}</Text>
                   </View>
                   <View style={styles.options}>

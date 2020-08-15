@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Image, Button, TextInput, Text, TouchableHighlight} from 'react-native';
+import {StyleSheet, View, ScrollView, KeyboardAvoidingView, Image, Button, TextInput, Text, TouchableHighlight} from 'react-native';
 import Swiper from 'react-native-swiper';
 import ImagePicker from 'react-native-image-picker'
 import DropDownPicker from 'react-native-dropdown-picker'
@@ -7,6 +7,7 @@ import DropDownPicker from 'react-native-dropdown-picker'
 import addImg from '../images/icons/addImg.png';
 import {get, post, uploadImg} from '../api/request'
 import { WToast } from 'react-native-smart-tip';
+import ItemMng from './ItemMng'
 
 const styles = StyleSheet.create({
   text: {
@@ -166,10 +167,12 @@ class ProductEdit extends React.Component {
     if(!this.contain(cateList, cate)) cate = undefined
     
     return (
-      <View>
+      <KeyboardAvoidingView>
+      <ScrollView>
         <View style={styles.row}>
           <Text>名称：</Text>
           <TextInput style={styles.input} defaultValue={product.name} onChangeText={name => this.changeState({name})}/>
+          <Button title={'保存'} onPress={() => this.save()} />
         </View>
         <View style={styles.row}>
           <Text>单价：</Text>
@@ -204,15 +207,19 @@ class ProductEdit extends React.Component {
             <Image style={styles.img} source={addImg} />
           </TouchableHighlight>
         </View>
+        {
+          product && product.id && <ItemMng productId={product.id}/>
+        }
         {/* <View style={styles.row}>
           <Text>详情：</Text>
           <TextInput placeholder={'输入产品详情'} defaultValue={product.detail}/>
         </View> */}
-        <View style={styles.row}>
+        {/* <View style={styles.row}>
           <Button title={'保存'} onPress={() => this.save()} />
-          {/* <Button title={'立即发布'} /> */}
-        </View>
-      </View>
+          <Button title={'立即发布'} />
+        </View> */}
+      </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }
