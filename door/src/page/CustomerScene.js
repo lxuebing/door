@@ -78,7 +78,7 @@ export default class MainScene extends React.Component {
       return (
         <NavigationContainer>
           <Stack.Navigator>
-            <Stack.Screen name="CustomerTab" component={CustomerTab} options={{title:'搜索框'}}/>
+            <Stack.Screen name="CustomerTab" component={CustomerTab} options={{title:'门业帮'}}/>
             <Stack.Screen name="ProductList" component={ProductList} options={{title:'商品列表'}}/>
             <Stack.Screen name="Product" component={Product} options={{title:'商品详情'}}/>
             <Stack.Screen name="PlaceOrder" component={PlaceOrder} options={{title:'下单'}}/>

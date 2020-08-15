@@ -6419,6 +6419,11 @@ react-native-reanimated@^1.10.0:
   dependencies:
     fbjs "^1.0.0"
 
+react-native-refresh-list-view@^1.0.12:
+  version "1.0.12"
+  resolved "https://registry.npm.taobao.org/react-native-refresh-list-view/download/react-native-refresh-list-view-1.0.12.tgz#1d5a836b0106698068594efd7d8f71e8f8323366"
+  integrity sha1-HVqDawEGaYBoWU79fY9x6PgyM2Y=
+
 react-native-root-siblings@^3.2.3:
   version "3.2.3"
   resolved "https://registry.npm.taobao.org/react-native-root-siblings/download/react-native-root-siblings-3.2.3.tgz#df5a1cff3a3a1f433f57320e1cae719f1b15a3f2"

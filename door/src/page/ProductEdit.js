@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, ScrollView, KeyboardAvoidingView, Image, Button, TextInput, Text, TouchableHighlight} from 'react-native';
+import {StyleSheet, View, ScrollView, KeyboardAvoidingView, Image, Button, TextInput, Text, TouchableHighlight, Alert} from 'react-native';
 import Swiper from 'react-native-swiper';
 import ImagePicker from 'react-native-image-picker'
 import DropDownPicker from 'react-native-dropdown-picker'
@@ -69,6 +69,10 @@ class ProductEdit extends React.Component {
     console.log("保存商品信息：", data)
     post(url, data, res => {
       WToast.show({data: '保存成功'})
+      console.log("商品信息",product)
+      if(!product.id) {
+        this.props.navigation.goBack()
+      }
     })
   }
 
@@ -111,9 +115,17 @@ class ProductEdit extends React.Component {
     });
   }
 
-  removeImg() {
-    console.log("删除图片")
-    
+  removeImg(index) {
+    let imgs = this.state.imgs
+    Alert.alert('移除图片', '确定要移除该图片吗？',
+      [
+        {text:'取消', onPress: () => {}},
+        {text:'移除', onPress: () => {
+          imgs.splice(index, 1)
+          this.setState({imgs})
+        }}
+      ]
+    )
   }
 
   loadCategorys() {
@@ -200,7 +212,9 @@ class ProductEdit extends React.Component {
           <Text>图片：</Text>
           {
             imgs && imgs.map((item, index) => (
-              <Image key={index} style={styles.img} source={{uri: item}}/>
+              <TouchableHighlight key={index} onPress={() => this.removeImg(index)}>
+                <Image style={styles.img} source={{uri: item}}/>
+              </TouchableHighlight>
               ))
           }
           <TouchableHighlight onPress={() => this.addImg()}>

@@ -1,6 +1,8 @@
 import React from 'react';
 import {StyleSheet, View, ScrollView, Text, Image, Button, TouchableHighlight, Dimensions} from 'react-native';
+import RefreshListView, { RefreshState } from "react-native-refresh-list-view"
 import {get} from '../api/request'
+import { WToast } from 'react-native-smart-tip';
 
 const styles = StyleSheet.create({
   text: {
@@ -49,6 +51,7 @@ class ProductList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      refreshState: RefreshState.Idle,
       productList: [
         
       ]
@@ -60,25 +63,36 @@ class ProductList extends React.Component {
     this.props.navigation.navigate('Product', {productId: item.id})
   }
 
-  loadMore() {
+  loadMore(startId) {
     let {productList} = this.state
     let query = {
-      limit: 10
+      limit: 10,
+      startId
     }
     if(this.props.route && this.props.route.params) {
       let {category} = this.props.route.params
       query.category = category
     }
-    if(productList && productList.length > 0) {
-      query.startId = productList[productList.length-1].id
-    }
     get('/api/product/list', query, res => {
         console.log("商品列表", res)
         let data = res.data
+        if(data.length === 0) {
+          WToast.show({data: '没有更多了'})
+          return
+        } 
         this.setState({
-          productList: productList.concat(data)
+          productList: startId ? productList.concat(data): data
         })
     })
+  }
+
+  getLastId() {
+    let productList = this.state.productList
+    if(productList && productList.length > 0) {
+      return productList[productList.length-1].id
+    } else {
+      return 0
+    }
   }
 
   componentDidMount() {
@@ -88,31 +102,47 @@ class ProductList extends React.Component {
     })
   }
 
-  render() {
-    let {productList} = this.state
+  onHeaderRefresh() {
+    console.log("下拉刷新")
+    this.loadMore()
+  }
+
+  onFooterRefresh() {
+    console.log("加载更多")
+    this.loadMore(this.getLastId())
+  }
+
+  renderCell(item) {
     return (
-      <ScrollView style={styles.container}>
-        {
-          productList && productList.map((item,index) => (
-            <View key={index}>
-              <TouchableHighlight key={index} onPress = { (e) => this.onItemClicked(item) }>
-                <View style={styles.listItem}>
-                  <Image
-                    style={styles.productImg}
-                    source={{uri: item.img}}
-                  />
-                  <View style={styles.productDetail}>
-                    <Text style={styles.productName}>{item.name}</Text>
-                    <Text style={styles.productPrice}>￥{item.price}</Text>
-                    <Text style={styles.productSummary}>{item.summary}</Text>
-                  </View>
-                </View>
-              </TouchableHighlight>
+     <View>
+        <TouchableHighlight onPress = { (e) => this.onItemClicked(item) }>
+          <View style={styles.listItem}>
+            <Image
+              style={styles.productImg}
+              source={{uri: item.img}}
+            />
+            <View style={styles.productDetail}>
+              <Text style={styles.productName}>{item.name}</Text>
+              <Text style={styles.productPrice}>￥{item.price}</Text>
+              <Text style={styles.productSummary}>{item.summary}</Text>
             </View>
-          ))
-        }
-      </ScrollView>
-    );
+          </View>
+        </TouchableHighlight>
+      </View>
+    )
+  }
+
+  render() {
+    let {productList, refreshState} = this.state
+    return (
+      <RefreshListView data={productList} 
+        refreshState={refreshState} 
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({item}) => this.renderCell(item)}
+        onHeaderRefresh={() => this.onHeaderRefresh()}
+        onFooterRefresh={() => this.onFooterRefresh()}
+        />
+    )
   }
 }
 

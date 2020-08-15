@@ -95,7 +95,7 @@ export default class ManageScene extends React.Component {
       return (
         <NavigationContainer>
           <Stack.Navigator>
-            <Stack.Screen name="ManageTab" component={ManageTab} options={{title:'搜索'}}/>
+            <Stack.Screen name="ManageTab" component={ManageTab} options={{title:'门业帮管理系统'}}/>
             <Stack.Screen name="ProductEdit" component={ProductEdit} options={{title:'商品编辑'}}/>
             <Stack.Screen name="OrderDetail" component={OrderDetail} options={{title:'订单详情'}}/>
             <Stack.Screen name="Login" component={Login} options={{title:'登录'}}/>

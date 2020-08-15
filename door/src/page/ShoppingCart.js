@@ -3,6 +3,7 @@ import {StyleSheet, Button, View, Image, ScrollView, TouchableHighlight, Text, V
 import {formatTime} from '../utils/DateUtil'
 import {get, post, } from '../api/request';
 import {WToast} from 'react-native-smart-tip'
+import RefreshListView, { RefreshState } from "react-native-refresh-list-view"
 
 const styles = StyleSheet.create({
   text: {
@@ -47,6 +48,7 @@ class ShoppingCart extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      refreshState: RefreshState.Idle,
       orderList: [
       ]
     };
@@ -54,17 +56,50 @@ class ShoppingCart extends React.Component {
 
   componentDidMount() {
     this.props.navigation.addListener('focus', () => {
-      this.loadOrderList()
+      this.loadMore()
     })
   }
 
-  loadOrderList() {
-    get('/api/user/order/list', {}, res => {
+  componentWillUnmount() {
+    this.setState = ()=>false;
+  }
+
+  loadMore(startId) {
+    let {orderList} = this.state
+    let query = {
+      limit: 10,
+      startId
+    }
+    get('/api/user/order/list', query, res => {
       console.log("订单列表", res)
+      let data = res.data
+      if(data.length === 0) {
+        WToast.show({data: '没有更多了'})
+        return
+      } 
       this.setState({
-        orderList: res.data
+        orderList: startId ? orderList.concat(data): data
       })
     })
+  }
+
+  getLastId() {
+    let orderList = this.state.orderList
+    if(orderList && orderList.length > 0) {
+      return orderList[orderList.length-1].id
+    } else {
+      return 0
+    }
+  }
+
+  onHeaderRefresh() {
+    console.log("下拉刷新")
+    this.loadMore()
+  }
+
+  onFooterRefresh() {
+    console.log("加载更多")
+    this.loadMore(this.getLastId())
   }
 
   onItemClicked(item) {
@@ -77,7 +112,7 @@ class ShoppingCart extends React.Component {
     get('/api/user/order/place', {orderId: item.id}, res => {
       console.log("下单结果",res.data)
       WToast.show({data: res.data.data})
-      this.loadOrderList()
+      this.loadMore()
     })
   }
 
@@ -96,36 +131,42 @@ class ShoppingCart extends React.Component {
     }
   }
 
-  render() {
-    let {orderList} = this.state
+  renderCell(item) {
     return (
-      <ScrollView style={styles.orderList}>
-        {
-          orderList && orderList.map((item, index) => (
-            <TouchableHighlight key={index} onPress={() => {this.onItemClicked(item)}}>
-              <View style={styles.listItem}>
-                <Image
-                  style={styles.productImg}
-                  source={{uri: item.productImg}}
-                />
-                <View style={styles.productDetail}>
-                  <Text style={styles.productName}>{item.productName}</Text>
-                  <View style={{...styles.row, flex: 1}}>
-                    <Text style={styles.productPrice}>￥{item.price}</Text>
-                    <Text>数量：{item.count}</Text>
-                    <Text>{formatTime(item.createTime)}</Text>
-                  </View>
-                  <View style={styles.row}>
-                    { this.getStatus(item)}
-                    { item.status === 0 && <Button title="下单" onPress={() => this.placeOrder(item)}/>}
-                  </View>
-                </View>
-              </View>
-            </TouchableHighlight>
-          )
-          )
-        }
-      </ScrollView>
+      <TouchableHighlight onPress={() => {this.onItemClicked(item)}}>
+        <View style={styles.listItem}>
+          <Image
+            style={styles.productImg}
+            source={{uri: item.productImg}}
+          />
+          <View style={styles.productDetail}>
+            <Text style={styles.productName}>{item.productName}</Text>
+            <View style={{...styles.row, flex: 1}}>
+              <Text style={styles.productPrice}>￥{item.price}</Text>
+              <Text>数量：{item.count}</Text>
+              <Text>{formatTime(item.createTime)}</Text>
+            </View>
+            <View style={styles.row}>
+              { this.getStatus(item)}
+              { item.status === 0 && <Button title="下单" onPress={() => this.placeOrder(item)}/>}
+            </View>
+          </View>
+        </View>
+      </TouchableHighlight>
+    )
+  }
+
+  render() {
+    let {orderList, refreshState} = this.state
+    return (
+      <RefreshListView data={orderList} 
+        refreshState={refreshState} 
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({item}) => this.renderCell(item)}
+        onHeaderRefresh={() => this.onHeaderRefresh()}
+        onFooterRefresh={() => this.onFooterRefresh()}
+        />
+      
     );
   }
 }

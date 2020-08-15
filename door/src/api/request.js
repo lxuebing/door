@@ -26,6 +26,9 @@ function doRequest({ url, method, headers, data, callback, fail}) {
     let data = res.data 
     if(data.code === 0) {
       callback(data)
+    } else if(data.code === 100401) {
+      WToast.show({data: data.msg})
+      if(fail) fail(res)
     } else {
       WToast.show({data: data.data})
       if(fail) fail(res)

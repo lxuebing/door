@@ -2,6 +2,8 @@ import React from 'react';
 import {StyleSheet, View, ScrollView, Text, Image, Button, TouchableHighlight, Dimensions} from 'react-native';
 import {formatTime} from '../utils/DateUtil'
 import {get} from '../api/request'
+import RefreshListView, { RefreshState } from "react-native-refresh-list-view"
+import { WToast } from 'react-native-smart-tip';
 
 const styles = StyleSheet.create({
   text: {
@@ -54,6 +56,7 @@ class OrderMng extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      refreshState: RefreshState.Idle,
       orderList: [
         
       ]
@@ -65,9 +68,6 @@ class OrderMng extends React.Component {
     this.props.navigation.navigate('OrderDetail', {orderId: item.id})
   }
 
-  loadMore() {
-    // todo: 滑动至底部时加载下一页
-  }
 
   setOrder(item) {
     console.log("向供应商订货", item)
@@ -78,17 +78,45 @@ class OrderMng extends React.Component {
   }
 
   componentDidMount() {
-    this.loadOrderList()
+    this.loadMore()
   }
 
-  loadOrderList() {
-    get('/api/manage/order/list', {}, res => {
+  loadMore(startId) {
+    let {orderList} = this.state
+    let query = {
+      limit: 10,
+      startId
+    }
+    get('/api/manage/order/list', query, res => {
       console.log("订单列表", res)
+      let data = res.data
+      if(data.length === 0) {
+        WToast.show({data: '没有更多了'})
+        return
+      } 
       this.setState({
-        orderList: res.data
+        orderList: startId ? orderList.concat(data): data
       })
     })
-    
+  }
+
+  getLastId() {
+    let orderList = this.state.orderList
+    if(orderList && orderList.length > 0) {
+      return orderList[orderList.length-1].id
+    } else {
+      return 0
+    }
+  }
+
+  onHeaderRefresh() {
+    console.log("下拉刷新")
+    this.loadMore()
+  }
+
+  onFooterRefresh() {
+    console.log("加载更多")
+    this.loadMore(this.getLastId())
   }
 
   getStatus(item){
@@ -103,46 +131,51 @@ class OrderMng extends React.Component {
     }
   }
 
-  render() {
-    let {orderList} = this.state
+  renderCell(item) {
     return (
-      <ScrollView style={styles.container}>
-        {
-          orderList && orderList.map((item,index) => (
-            <View key={index}>
-              <TouchableHighlight key={index} onPress = { (e) => this.onItemClicked(item) }>
-                <View style={styles.listItem}>
-                  <Image
-                    style={styles.productImg}
-                    source={{uri: item.productImg}}
-                  />
-                  <View style={styles.productDetail}>
-                    <Text style={styles.productName}>{item.productName}</Text>
-                    <View style={styles.row}>
-                      <Text style={styles.productPrice}>￥{item.price}</Text>
-                      <Text>数量：{item.count}</Text>
-                      <Text>{formatTime(item.createTime)}</Text>
-                    </View>
-                    <View style={styles.row}>
-                      <Text>经销商：{item.customer}</Text>
-                    </View>
-                    <View style={styles.row}>
-                      <Text>地址：{item.address}</Text>
-                    </View>
-                    <View style={styles.row}>
-                      {this.getStatus(item)}
-                      { item.status === 1 &&
-                        <Button title="订货" onPress={() => this.setOrder(item)}/>
-                      }
-                    </View>
-                  </View>
-                </View>
-              </TouchableHighlight>
+      <TouchableHighlight onPress = { (e) => this.onItemClicked(item) }>
+        <View style={styles.listItem}>
+          <Image
+            style={styles.productImg}
+            source={{uri: item.productImg}}
+          />
+          <View style={styles.productDetail}>
+            <Text style={styles.productName}>{item.productName}</Text>
+            <View style={styles.row}>
+              <Text style={styles.productPrice}>￥{item.price}</Text>
+              <Text>数量：{item.count}</Text>
+              <Text>{formatTime(item.createTime)}</Text>
             </View>
-          ))
-        }
-      </ScrollView>
-    );
+            <View style={styles.row}>
+              <Text>经销商：{item.customer}</Text>
+            </View>
+            <View style={styles.row}>
+              <Text>地址：{item.address}</Text>
+            </View>
+            <View style={styles.row}>
+              {this.getStatus(item)}
+              { item.status === 1 &&
+                <Button title="订货" onPress={() => this.setOrder(item)}/>
+              }
+            </View>
+          </View>
+        </View>
+      </TouchableHighlight>
+    )
+  }
+
+  render() {
+    let {orderList, refreshState} = this.state
+    return (
+      <RefreshListView data={orderList} 
+        refreshState={refreshState} 
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({item}) => this.renderCell(item)}
+        onHeaderRefresh={() => this.onHeaderRefresh()}
+        onFooterRefresh={() => this.onFooterRefresh()}
+        />
+    )
+    
   }
 }
 
