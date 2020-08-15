@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, ScrollView, Text, Button, Image, TextInput, TouchableHighlight, Dimensions, DeviceEventEmitter} from 'react-native';
+import {StyleSheet, View, ScrollView, Text, Button, Image, TextInput, TouchableHighlight, Dimensions, Alert} from 'react-native';
 import TreeView from './component/TreeView'
 import {get, post, uploadImg} from '../api/request'
 import addImg from '../images/icons/addImg.png';
@@ -12,7 +12,8 @@ const styles = StyleSheet.create({
     color: 'red',
   },
   container: {
-    height: Dimensions.get('window').height
+    display: 'flex',
+    flex: 1
   },
   editPanel: {
     width: Dimensions.get('window').width,
@@ -27,7 +28,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   categoryTree: {
-    
+    flex: 1
   },
   img: {
     width: 80,
@@ -51,6 +52,10 @@ class CategoryMng extends React.Component {
 
   componentDidMount() {
     this.loadCategoryTree()
+  }
+
+  componentWillUnmount() {
+    this.setState = ()=>false;
   }
 
   loadCategoryTree() {
@@ -80,6 +85,23 @@ class CategoryMng extends React.Component {
     this.setState({
         test: 0,
     })
+  }
+
+  onItemDelete(item) {
+    console.log("删除品类：", item)
+    Alert.alert('删除品类', '确定要删除品类“' + item.name + '”吗？',
+      [
+        {text:'取消', onPress: () => {}},
+        {text:'删除', onPress: () => {
+          get('/api/manage/category/delete', {categoryId: item.id}, res => {
+            console.log("删除品类结果", res.data)
+            WToast.show({data: "品类已删除"})
+            this.loadCategoryTree()
+          })
+        }}
+      ]
+    )
+    
   }
 
   onSave() {
@@ -159,13 +181,13 @@ class CategoryMng extends React.Component {
           </View>
         </View>
         
-        <View style={styles.categoryTree}>
+        <ScrollView style={styles.categoryTree}>
           <TreeView
-            data={categoryTree}
-            onItemClick={(item) => this.onItemClick(item)}
-            titleKey={'name'}
+            tree={categoryTree}
+            onItemClicked={(item) => this.onItemClick(item)}
+            onDelete={(item) => this.onItemDelete(item)}
           />
-        </View>
+        </ScrollView>
       </View>
     );
   }

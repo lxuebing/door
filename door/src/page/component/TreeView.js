@@ -1,78 +1,97 @@
 import React, {Component} from 'react'
 import {
     View,
-    FlatList,
-    Platform,
-    LayoutAnimation,
-    UIManager,
-    Animated,
+    StyleSheet,
     Text,
     Image,
     TouchableOpacity
 } from "react-native";
+import trashIcon from '../../images/icons/trash.png'
+import addIcon from '../../images/icons/add.png'
+import minusIcon from '../../images/icons/minus.png'
 
-export default class NurTreeView extends Component {
+const styles = StyleSheet.create({
+    node: {
+        borderColor: 'silver',
+        borderBottomWidth: 1,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 8,
+    },
+    name: {
+        fontSize: 20,
+    },
+    operations: {
+        display: 'flex',
+        backgroundColor: 'white',
+        width: 20,
+        height: 20,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 10,
+        marginLeft: 'auto'
+    },
+    trashIcon: {
+        width: 15,
+        height: 15
+    },
+    openIcon: {
+        tintColor: '#555',
+        width: 15,
+        height: 15,
+        marginRight: 10
+    },
+    shortcut: {
+        width: 20,
+        height: 20,
+    }
+  });
 
-    renderItem(item, index, style) {
-        if(!item) return;
-        return (<View
-            style={[, style]}>
-            <TouchableOpacity
-                onPress={() => this.props.onItemClick && this.props.onItemClick(item)}
-                style={{
-                    justifyContent: 'space-between',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                }}
-            >
+  
+export default function TreeView({tree, onItemClicked, onDelete}) {
 
-                <View style={[{
-                    flexDirection: 'row',
-                    alignItems: 'center'
-                }]}>
-                    <Text style={{color: 'white'}}>{item[this.props.titleKey]}</Text>
+    const hasChildren = (node) => {
+        return node.children && node.children.length > 0
+    }
+
+    const getOpenIcon = (node) => {
+        if(hasChildren(node)) {
+            return node.isOpen ? minusIcon: addIcon
+        } 
+    }
+
+    const renderTreeNode = (node, level) => {
+        return (
+            <>
+            <TouchableOpacity key={node.id} onPress={() => onItemClicked && onItemClicked(node)}>
+                <View style={{...styles.node, paddingLeft: 20 * level + 8, backgroundColor: level === 0 && 'white'}}>
+                    <Image style={styles.openIcon} source={getOpenIcon(node)} />
+                    <Image style={styles.shortcut} source={{uri: node.shortcut}} />
+                    <Text style={styles.name}>{node.name}</Text>
+                    <TouchableOpacity style={styles.operations} onPress={() => onDelete && onDelete(node)}>
+                        <Image style={styles.trashIcon} source={trashIcon} />
+                    </TouchableOpacity>
                 </View>
-
-
-                <Image
-                    style={[{width: 12, height: 12, tintColor: 'white'}]}
-                    source={!item.isOpen ? require('../../images/icons/add.png') :
-                        require('../../images/icons/minus.png')}/>
-
             </TouchableOpacity>
-
-            {/**items*/}
-            {item.isOpen ? this.renderFlatList(item.children,
-                ({item, index}) => this.renderItem(item, index, {
-                    paddingLeft: 20,
-                })) : null}
-
-        </View>);
+            {
+                hasChildren(node) && node.isOpen && node.children.map(item => {
+                    return renderTreeNode(item, level + 1)
+                })
+            }
+            </>
+        )
     }
+    let nodes = tree 
 
-
-    /**
-     * render FlatList
-     */
-    renderFlatList(data, renderItem) {
-        return <FlatList
-            data={data}
-            renderItem={renderItem}
-            extraData={this.props}
-            keyExtractor={(item, index) => index.toString()}
-        />
-    }
-
-    render() {
-        return (<View >
-
-            {this.renderFlatList(this.props.data,
-                ({item, index}) => this.renderItem(item, index, {
-                    marginTop: 8,
-                    backgroundColor: index % 2 === 0 ? '#006c9b' : '#009a4e',
-                    paddingRight: 16
-                }))}
-
-        </View>)
-    }
+    return (
+        <View style={{flex: 1}}>
+            {
+                nodes && nodes.map(node => {
+                    return renderTreeNode(node, 0)
+                })
+            }
+        </View>
+    )
 }

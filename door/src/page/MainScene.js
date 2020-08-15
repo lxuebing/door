@@ -34,6 +34,7 @@ export default class MainScene extends React.Component {
     this.modeListener.remove()
     this.loadingListener.remove()
     this.dismisListener.remove()
+    this.setState = ()=>false;
   }
 
   render() {
