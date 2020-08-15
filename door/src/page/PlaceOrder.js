@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Image, Button, Text, TextInput, TouchableHighlight} from 'react-native';
+import {StyleSheet, View, ScrollView, KeyboardAvoidingView, Image, Button, Text, TextInput, TouchableHighlight} from 'react-native';
 import Selector from './component/Selector'
 import {get, post} from '../api/request'
 import {buildParamsString} from '../utils/StringUtil'
@@ -243,34 +243,36 @@ class PlaceOrder extends React.Component {
     let {product, count} = this.state
     console.log("商品信息", product)
     return (
-      <View>
-        <View style={styles.productInfo}>
-            <TouchableHighlight onPress = { (e) => this.onProductClicked() }>
-                <View style={styles.listItem}>
-                  <Image
-                    style={styles.productImg}
-                    source={{uri: product.img}}
-                  />
-                  <View style={styles.productDetail}>
-                    <Text style={styles.productName}>{product.name}</Text>
-                    <Text style={styles.productPrice}>￥{product.price}</Text>
-                    <Text style={styles.productSummary}>{product.summary}</Text>
+      <KeyboardAvoidingView>
+        <ScrollView>
+          <View style={styles.productInfo}>
+              <TouchableHighlight onPress = { (e) => this.onProductClicked() }>
+                  <View style={styles.listItem}>
+                    <Image
+                      style={styles.productImg}
+                      source={{uri: product.img}}
+                    />
+                    <View style={styles.productDetail}>
+                      <Text style={styles.productName}>{product.name}</Text>
+                      <Text style={styles.productPrice}>￥{product.price}</Text>
+                      <Text style={styles.productSummary}>{product.summary}</Text>
+                    </View>
                   </View>
-                </View>
-            </TouchableHighlight>
-        </View>
-        {
-            this.getParams()
-        }
-        
-        <View style={styles.row}>
-            <Text>数量：</Text>
-            <TextInput style={styles.tinyInput} defaultValue={'' +count} onChangeText={(count) => this.setState({count})}></TextInput>
-        </View>
-        <View style={styles.operation}>
-          <Button title="提交订单" onPress={() => this.addOrder()}/>
-        </View>
-      </View>
+              </TouchableHighlight>
+          </View>
+          {
+              this.getParams()
+          }
+          
+          <View style={styles.row}>
+              <Text>数量：</Text>
+              <TextInput style={styles.tinyInput} defaultValue={'' +count} onChangeText={(count) => this.setState({count})}></TextInput>
+          </View>
+          <View style={styles.operation}>
+            <Button title="提交订单" onPress={() => this.addOrder()}/>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }

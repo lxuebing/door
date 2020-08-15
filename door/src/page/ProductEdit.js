@@ -1,6 +1,5 @@
 import React from 'react';
 import {StyleSheet, View, ScrollView, KeyboardAvoidingView, Image, Button, TextInput, Text, TouchableHighlight, Alert} from 'react-native';
-import Swiper from 'react-native-swiper';
 import ImagePicker from 'react-native-image-picker'
 import DropDownPicker from 'react-native-dropdown-picker'
 
@@ -224,14 +223,6 @@ class ProductEdit extends React.Component {
         {
           product && product.id && <ItemMng productId={product.id}/>
         }
-        {/* <View style={styles.row}>
-          <Text>详情：</Text>
-          <TextInput placeholder={'输入产品详情'} defaultValue={product.detail}/>
-        </View> */}
-        {/* <View style={styles.row}>
-          <Button title={'保存'} onPress={() => this.save()} />
-          <Button title={'立即发布'} />
-        </View> */}
       </ScrollView>
       </KeyboardAvoidingView>
     );
