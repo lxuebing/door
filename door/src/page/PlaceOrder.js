@@ -58,7 +58,8 @@ const styles = StyleSheet.create({
       width: 150,
   },
   params: {
-
+    fontSize: 16,
+    padding: 10
   },
   listItem: {
     borderColor: 'silver',
@@ -217,13 +218,13 @@ class PlaceOrder extends React.Component {
     let {product, color, openway, custom, item} = this.state
     if(custom === 0) {
         return (
-            <View style={styles.parms}>
-                <Text>{item && item.params && buildParamsString(item.params)}</Text>
+            <View style={styles.params}>
+                <Text style={{fontSize: 16, color: 'green'}}>{item && item.params && buildParamsString(item.params)}</Text>
             </View>
         )
     } else {
         return (
-        <View style={styles.parms}>
+        <View style={styles.params}>
             <View style={styles.row}>
                 <Text>颜色：</Text>
                 <Selector items={this.state.colors} selected={color} onItemSelected={(color) => {this.onColorChoose(color)}}/>
@@ -268,8 +269,8 @@ class PlaceOrder extends React.Component {
               this.getParams()
           }
           
-          <View style={styles.row}>
-              <Text>数量：</Text>
+          <View style={{...styles.row, padding: 10}}>
+              <Text style={{fontSize: 16}}>数量：</Text>
               <TextInput style={styles.tinyInput} defaultValue={'' +count} onChangeText={(count) => this.setState({count})}></TextInput>
           </View>
         </ScrollView>

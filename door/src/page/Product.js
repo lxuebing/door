@@ -32,7 +32,8 @@ const styles = StyleSheet.create({
   baseInfo: {
     padding: 10,
     borderWidth: 1,
-    borderColor: 'silver'
+    borderColor: 'silver',
+    backgroundColor: 'white'
   },
   price: {
     fontSize:30,
@@ -53,7 +54,8 @@ const styles = StyleSheet.create({
     borderColor: 'silver',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    backgroundColor: 'white'
   },
   operation: {
     flexDirection: 'row'
@@ -144,7 +146,7 @@ class Product extends React.Component {
   }
 
   render() {
-    let {product, item, images} = this.state
+    let {product, item, images, productDetail} = this.state
     return (
       <>
       <ScrollView>
@@ -173,13 +175,15 @@ class Product extends React.Component {
               <Selector items={this.state.items} selected={item} onItemSelected={(item) => {this.onItemChoose(item)}}/>
             </View>
             <View style={styles.detail}>
-              <Text>详情</Text>
-            </View>
+              <Text>{productDetail}</Text>
+            </View> 
         </View>
         }
       </ScrollView>
       <View style={styles.footbar}>
-        <Image source={cartIcon} style={styles.shoppingCart}/>
+        <TouchableHighlight onPress={() => this.props.navigation.navigate('ShoppingCart')}>
+          <Image source={cartIcon} style={styles.shoppingCart}/>
+        </TouchableHighlight>
         <View style={styles.operation}>
           <View  style={{paddingLeft: 10}}>
             <Button title="去定制" onPress={() => this.placeOrder(1)}/>

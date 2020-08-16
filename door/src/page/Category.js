@@ -3,8 +3,15 @@ import {StyleSheet, View, ScrollView, Text, Image, TouchableHighlight, Dimension
 import {get} from '../api/request'
 
 const styles = StyleSheet.create({
-  text: {
+  cateName: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16
+  },
+  cateNameSelected: {
     color: 'black',
+    fontWeight: 'bold',
+    fontSize: 16
   },
   container: {
     height: Dimensions.get('window').height,
@@ -12,14 +19,14 @@ const styles = StyleSheet.create({
   },
   sidebar: {
     height: Dimensions.get('window').height,
-    backgroundColor: 'silver',
+    backgroundColor: '#1296DB',
     width: 120
   },
   content: {
     flex:1,
-    borderColor: 'blue',
     flexDirection: 'row',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    backgroundColor: '#F2F2F2'
   },
   img: {
     height: 60,
@@ -28,7 +35,15 @@ const styles = StyleSheet.create({
   listItem: {
     padding: 10,
     justifyContent:"center",
-    alignItems:"center"
+    alignItems:"center",
+    borderColor: '#0785C0',
+    borderBottomWidth: 1
+  },
+  listItemSelected: {
+    padding: 10,
+    justifyContent:"center",
+    alignItems:"center",
+    backgroundColor: '#F2F2F2'
   },
   categoryItem: {
     padding: 20,
@@ -65,6 +80,13 @@ class Category extends React.Component {
     })
   }
 
+  onFirstCateSelected(cate) {
+    this.setState({
+      selected: cate
+    })
+    this.loadSecondCateList(cate)
+  }
+
   componentDidMount() {
     get('/api/category/list', {root: 0}, res => {
       console.log("一级品类", res)
@@ -72,7 +94,10 @@ class Category extends React.Component {
       this.setState({
         firstCates: cates
       })
-      if(cates && cates.length > 0) this.loadSecondCateList(cates[0])
+      if(cates && cates.length > 0) {
+        this.setState({selected: cates[0]})
+        this.loadSecondCateList(cates[0])
+      }
     })
   }
   
@@ -81,14 +106,14 @@ class Category extends React.Component {
   }
 
   render() {
-    let {firstCates,secondCates} = this.state
+    let {firstCates, secondCates, selected} = this.state
     return (
       <View style={styles.container}>
         <View style={styles.sidebar}>
           {  firstCates && firstCates.map((cate,index) => (
-            <TouchableHighlight key={index} onPress = { (e) => this.loadSecondCateList(cate) }>
-              <View style={styles.listItem}>
-                <Text style={styles.text}>{cate.name}</Text>
+            <TouchableHighlight key={index} onPress = { (e) => this.onFirstCateSelected(cate) }>
+              <View style={cate === selected ? styles.listItemSelected: styles.listItem}>
+                <Text style={cate === selected ? styles.cateNameSelected:styles.cateName}>{cate.name}</Text>
               </View>
             </TouchableHighlight>
           ))}
@@ -100,7 +125,7 @@ class Category extends React.Component {
               <TouchableHighlight key={index} onPress = { (e) => this.onSecondCateClicked(cate) }>
                 <View style={styles.categoryItem}>
                   <Image source={{uri:cate.shortcut}} style={styles.img} />
-                  <Text style={styles.text}>{cate.name}</Text>
+                  <Text>{cate.name}</Text>
                 </View>
               </TouchableHighlight>
             ))}
