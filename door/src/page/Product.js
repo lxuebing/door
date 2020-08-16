@@ -47,12 +47,21 @@ const styles = StyleSheet.create({
   detail: {
     padding: 10,
   },
+  footbar: {
+    padding: 5,
+    borderWidth: 1,
+    borderColor: 'silver',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
   operation: {
     flexDirection: 'row'
   },
   shoppingCart: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
+    tintColor: '#888'
   }
 });
 
@@ -137,6 +146,7 @@ class Product extends React.Component {
   render() {
     let {product, item, images} = this.state
     return (
+      <>
       <ScrollView>
         {
           product.id && <View style={styles.productInfo}>
@@ -167,17 +177,26 @@ class Product extends React.Component {
             </View>
         </View>
         }
+      </ScrollView>
+      <View style={styles.footbar}>
+        <Image source={cartIcon} style={styles.shoppingCart}/>
         <View style={styles.operation}>
-          <Image source={cartIcon} style={styles.shoppingCart}/>
-          <Button title="去定制" onPress={() => this.placeOrder(1)}/>
+          <View  style={{paddingLeft: 10}}>
+            <Button title="去定制" onPress={() => this.placeOrder(1)}/>
+          </View>
           {
             item ? 
-            <Button title="去下单" onPress={() => this.placeOrder(0)}/>
+            <View  style={{paddingLeft: 10}}>
+              <Button title="去下单" onPress={() => this.placeOrder(0)}/>
+            </View>
             :
-            <Button title="去下单" disabled/>
+            <View  style={{paddingLeft: 10}}>
+              <Button title="去下单" disabled/>
+            </View>
           }
         </View>
-      </ScrollView>
+      </View>
+      </>
     );
   }
 }

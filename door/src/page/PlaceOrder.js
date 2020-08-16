@@ -44,7 +44,11 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   operation: {
-    flexDirection: 'row'
+    flexDirection: 'row-reverse',
+    borderColor: 'silver',
+    borderWidth: 1,
+    padding: 5,
+    backgroundColor: 'white'
   },
   shoppingCart: {
     width: 50,
@@ -243,7 +247,7 @@ class PlaceOrder extends React.Component {
     let {product, count} = this.state
     console.log("商品信息", product)
     return (
-      <KeyboardAvoidingView>
+      <KeyboardAvoidingView style={{display: 'flex', flex: 1}}>
         <ScrollView>
           <View style={styles.productInfo}>
               <TouchableHighlight onPress = { (e) => this.onProductClicked() }>
@@ -268,15 +272,15 @@ class PlaceOrder extends React.Component {
               <Text>数量：</Text>
               <TextInput style={styles.tinyInput} defaultValue={'' +count} onChangeText={(count) => this.setState({count})}></TextInput>
           </View>
-          <View style={styles.operation}>
+        </ScrollView>
+        <View style={styles.operation}>
+          <View>
             <Button title="提交订单" onPress={() => this.addOrder()}/>
           </View>
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     );
   }
 }
-
-PlaceOrder.propTypes = {};
 
 export default PlaceOrder;
