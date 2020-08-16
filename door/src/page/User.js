@@ -83,9 +83,13 @@ class User extends React.Component {
       .then(res => {
         let data = res.data
         console.log("用户信息", data)
-        this.setState({
-          userInfo: data.data
-        })
+        if(data.code === 100401) {
+          WToast.show({data: "您还没有登录~"})
+        } else {
+          this.setState({
+            userInfo: data.data
+          })
+        }
       })
       .catch( err => {
         console.log("获取用户信息失败", err)
@@ -119,6 +123,10 @@ class User extends React.Component {
     this.props.navigation.addListener('focus', () => {
       this.getProfile()
     })
+  }
+
+  componentWillUnmount() {
+    this.setState = ()=>false;
   }
 
   render() {

@@ -79,6 +79,10 @@ class OrderMng extends React.Component {
     this.loadMore()
   }
 
+  componentWillUnmount() {
+    this.setState = ()=>false;
+  }
+
   loadMore(startId) {
     let {orderList} = this.state
     let query = {
@@ -129,6 +133,12 @@ class OrderMng extends React.Component {
     }
   }
 
+  getCustomType(order) {
+    if(order.custom === 1) return <Text style={{fontWeight: 'bold', color: 'green'}}>定制门</Text>
+    else if(order.custom === 0) return <Text style={{fontWeight: 'bold'}}>标准门</Text>
+    else return <Text style={{fontWeight: 'bold'}}>未知</Text>
+  }
+
   renderCell(item) {
     return (
       <TouchableHighlight onPress = { (e) => this.onItemClicked(item) }>
@@ -139,18 +149,19 @@ class OrderMng extends React.Component {
           />
           <View style={styles.productDetail}>
             <Text style={styles.productName}>{item.productName}</Text>
-            <View style={styles.row}>
+            <View style={{...styles.row, flex: 1}}>
               <Text style={styles.productPrice}>￥{item.price}</Text>
               <Text>数量：{item.count}</Text>
               <Text>{formatTime(item.createTime)}</Text>
             </View>
-            <View style={styles.row}>
+            {/* <View style={styles.row}>
               <Text>经销商：{item.customer}</Text>
             </View>
             <View style={styles.row}>
               <Text>地址：{item.address}</Text>
-            </View>
+            </View> */}
             <View style={styles.row}>
+              {this.getCustomType(item)}
               {this.getStatus(item)}
               { item.status === 1 &&
                 <Button title="订货" onPress={() => this.setOrder(item)}/>

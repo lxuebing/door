@@ -75,6 +75,10 @@ class Category extends React.Component {
       if(cates && cates.length > 0) this.loadSecondCateList(cates[0])
     })
   }
+  
+  componentWillUnmount() {
+    this.setState = ()=>false;
+  }
 
   render() {
     let {firstCates,secondCates} = this.state

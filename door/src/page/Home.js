@@ -117,6 +117,10 @@ class Home extends React.Component {
     this.loadPlateList()
   }
 
+  componentWillUnmount() {
+    this.setState = ()=>false;
+  }
+
   onSlideClicked(slide) {
     console.log("选中轮播", slide)
   }

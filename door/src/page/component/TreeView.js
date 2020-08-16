@@ -62,25 +62,28 @@ export default function TreeView({tree, onItemClicked, onDelete}) {
         } 
     }
 
-    const renderTreeNode = (node, level) => {
+    const renderTreeNode = (nodes, level) => {
         return (
-            <>
-            <TouchableOpacity key={node.id} onPress={() => onItemClicked && onItemClicked(node)}>
-                <View style={{...styles.node, paddingLeft: 20 * level + 8, backgroundColor: level === 0 && 'white'}}>
-                    <Image style={styles.openIcon} source={getOpenIcon(node)} />
-                    <Image style={styles.shortcut} source={{uri: node.shortcut}} />
-                    <Text style={styles.name}>{node.name}</Text>
-                    <TouchableOpacity style={styles.operations} onPress={() => onDelete && onDelete(node)}>
-                        <Image style={styles.trashIcon} source={trashIcon} />
+            nodes && nodes.map((node, index) => {
+                return (
+                    <>
+                    <TouchableOpacity key={node.id} onPress={() => onItemClicked && onItemClicked(node)}>
+                        <View style={{...styles.node, paddingLeft: 20 * level + 8, backgroundColor: level === 0 && 'white'}}>
+                            <Image style={styles.openIcon} source={getOpenIcon(node)} />
+                            <Image style={styles.shortcut} source={{uri: node.shortcut}} />
+                            <Text style={styles.name}>{node.name}</Text>
+                            <TouchableOpacity style={styles.operations} onPress={() => onDelete && onDelete(node)}>
+                                <Image style={styles.trashIcon} source={trashIcon} />
+                            </TouchableOpacity>
+                        </View>
                     </TouchableOpacity>
-                </View>
-            </TouchableOpacity>
-            {
-                hasChildren(node) && node.isOpen && node.children.map(item => {
-                    return renderTreeNode(item, level + 1)
-                })
-            }
-            </>
+                    {
+                        hasChildren(node) && node.isOpen && renderTreeNode(node.children, level + 1)
+                    }
+                    </>
+                )
+            })
+            
         )
     }
     let nodes = tree 
@@ -88,9 +91,7 @@ export default function TreeView({tree, onItemClicked, onDelete}) {
     return (
         <View style={{flex: 1}}>
             {
-                nodes && nodes.map(node => {
-                    return renderTreeNode(node, 0)
-                })
+                renderTreeNode(nodes, 0)
             }
         </View>
     )

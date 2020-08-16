@@ -56,6 +56,10 @@ class ProductEdit extends React.Component {
     this.loadProductDetail()
   }
 
+  componentWillUnmount() {
+    this.setState = ()=>false;
+  }
+
   save() {
     console.log("state", this.state)
     let {product, imgs} = this.state

@@ -102,6 +102,10 @@ class ProductList extends React.Component {
     })
   }
 
+  componentWillUnmount() {
+    this.setState = ()=>false;
+  }
+
   onHeaderRefresh() {
     console.log("下拉刷新")
     this.loadMore()

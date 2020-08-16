@@ -116,6 +116,12 @@ class ShoppingCart extends React.Component {
     })
   }
 
+  getCustomType(order) {
+    if(order.custom === 1) return <Text style={{fontWeight: 'bold', color: 'green'}}>定制门</Text>
+    else if(order.custom === 0) return <Text style={{fontWeight: 'bold'}}>标准门</Text>
+    else return <Text style={{fontWeight: 'bold'}}>未知</Text>
+  }
+
   getStatus(item){
     if(item.status === 0) {
       return (<Text style={{}}>{'未下单'}</Text>)
@@ -147,6 +153,7 @@ class ShoppingCart extends React.Component {
               <Text>{formatTime(item.createTime)}</Text>
             </View>
             <View style={styles.row}>
+              { this.getCustomType(item)}
               { this.getStatus(item)}
               { item.status === 0 && <Button title="下单" onPress={() => this.placeOrder(item)}/>}
             </View>

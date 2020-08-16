@@ -88,7 +88,7 @@ export default class Login extends React.Component {
                 </View>
                 <View style={styles.row}>
                     <Image></Image>
-                    <TextInput style={styles.input} placeholder={'密码'} onChangeText={password => this.setState({password})}/>
+                    <TextInput style={styles.input} placeholder={'密码'} secureTextEntry={true} onChangeText={password => this.setState({password})}/>
                 </View>
                 <View style={styles.row}>
                     <TextInput style={styles.input} placeholder={'验证码'} onChangeText={kaptcha => this.setState({kaptcha})}/>

@@ -55,6 +55,10 @@ export default class ItemMng extends React.Component {
     this.loadItems()
     this.loadDict()
   }
+  
+  componentWillUnmount() {
+    this.setState = ()=>false;
+  }
 
   add() {
     console.log("商品id", this.props.productId)

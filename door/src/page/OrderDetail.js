@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Image, Button, Text, TextInput, TouchableHighlight} from 'react-native';
+import {StyleSheet, View, Image, Button, Text, TextInput, TouchableHighlight, Dimensions} from 'react-native';
 import {get, post} from '../api/request'
 import {formatTime} from '../utils/DateUtil'
 
@@ -78,6 +78,19 @@ const styles = StyleSheet.create({
   },
   productSummary: {
 
+  },
+  line: {
+    borderColor: '#ddd',
+    borderBottomWidth: 1,
+    padding: 5,
+    paddingLeft: 10
+  },
+  paramText: {
+    fontSize: 16
+  },
+  paramName: {
+    fontSize: 16,
+    width: Dimensions.get('window').width / 3
   }
 });
 
@@ -116,14 +129,18 @@ class PlaceOrder extends React.Component {
     })
   }
 
+  componentWillUnmount() {
+    this.setState = ()=>false;
+  }
+
   onProductClicked() {
     this.props.navigation.navigate('Product', {productId: this.state.order.id})
   }
 
   getCustomType(order) {
-    if(order.custom === 1) return '定制门'
-    else if(order.custom === 0) return '标准门'
-    else return '未知'
+    if(order.custom === 1) return <Text style={{fontSize: 20, fontWeight: 'bold', color: 'green'}}>定制门</Text>
+    else if(order.custom === 0) return <Text style={{fontSize: 20, fontWeight: 'bold'}}>标准门</Text>
+    else return <Text style={{fontSize: 20, fontWeight: 'bold'}}>未知</Text>
   }
 
   render() {
@@ -149,29 +166,32 @@ class PlaceOrder extends React.Component {
                 </View>
             </TouchableHighlight>
         </View>
-        <View style={styles.row}>
-          <Text>{this.getCustomType(order)} </Text>
+        <View style={{...styles.row, ...styles.line}}>
+          {this.getCustomType(order)}
         </View>
-        <View style={styles.row}>
-          <Text>颜色：{params.color} </Text>
+        <View style={{...styles.row, ...styles.line}}>
+          <Text style={styles.paramName}>颜色：</Text>
+          <Text style={styles.paramText}>{params.color}</Text>
         </View>
-        <View style={styles.row}>
-            <Text>开向：{params.openway} </Text>
+        <View style={{...styles.row, ...styles.line}}>
+          <Text style={styles.paramName}>开向：</Text>
+          <Text style={styles.paramText}>{params.openway} </Text>
         </View>
-        <View style={styles.row}>
-          <Text>尺寸：宽 {params.width} 毫米, 高 {params.height} 毫米 </Text>
+        <View style={{...styles.row, ...styles.line}}>
+          <Text style={styles.paramName}>尺寸：</Text>
+          <Text style={styles.paramText}>宽 {params.width} 毫米, 高 {params.height} 毫米 </Text>
         </View>
-        <View style={styles.row}>
-          <Text>数量：{order.count}</Text>
+        <View style={{...styles.row, ...styles.line}}>
+          <Text style={styles.paramName}>数量：</Text>
+          <Text style={styles.paramText}>{order.count}</Text>
         </View>
-        <View style={styles.row}>
-          <Text>下单时间：{formatTime(order.createTime)}</Text>
+        <View style={{...styles.row, ...styles.line}}>
+          <Text style={styles.paramName}>下单时间：</Text>
+          <Text style={styles.paramText}>{formatTime(order.createTime)}</Text>
         </View>
       </View>
     );
   }
 }
-
-PlaceOrder.propTypes = {};
 
 export default PlaceOrder;
