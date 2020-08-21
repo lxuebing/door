@@ -87,6 +87,8 @@ export function uploadImg(img, callback) {
     DeviceEventEmitter.emit('dismis', {})
     callback(res)
   }, err => {
+    console.log('图片上传失败')
+    WToast.show({data: '上传失败，' + err.message})
     DeviceEventEmitter.emit('dismis', {})
   })
 }
