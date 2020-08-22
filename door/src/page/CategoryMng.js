@@ -107,7 +107,7 @@ class CategoryMng extends React.Component {
   onSave() {
     let data = {
       name: this.state.name, 
-      parentId: this.state.parentId, 
+      parentId: this.state.parentId ? this.state.parentId : 0, 
       shortcut: this.state.img
     }
     console.log("快速添加品类：", data)
