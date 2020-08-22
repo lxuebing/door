@@ -27,6 +27,11 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10
   },
+  imgList: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  },
   img: {
     width: 80,
     height: 80,
@@ -213,16 +218,18 @@ class ProductEdit extends React.Component {
         </View>
         <View style={styles.row}>
           <Text>图片：</Text>
-          {
-            imgs && imgs.map((item, index) => (
-              <TouchableHighlight key={index} onPress={() => this.removeImg(index)}>
-                <Image style={styles.img} source={{uri: item}}/>
-              </TouchableHighlight>
-              ))
-          }
-          <TouchableHighlight onPress={() => this.addImg()}>
-            <Image style={styles.img} source={addImg} />
-          </TouchableHighlight>
+          <View style={styles.imgList}>
+            {
+              imgs && imgs.map((item, index) => (
+                <TouchableHighlight key={index} onPress={() => this.removeImg(index)}>
+                  <Image style={styles.img} source={{uri: item}}/>
+                </TouchableHighlight>
+                ))
+            }
+            <TouchableHighlight onPress={() => this.addImg()}>
+              <Image style={styles.img} source={addImg} />
+            </TouchableHighlight>
+          </View>
         </View>
         {
           product && product.id && <ItemMng productId={product.id}/>

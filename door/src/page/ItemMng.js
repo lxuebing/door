@@ -4,6 +4,7 @@ import Selector from './component/Selector'
 import {get, post} from '../api/request'
 import {buildParamsString} from '../utils/StringUtil'
 import { WToast } from 'react-native-smart-tip';
+import Modal from "react-native-modal"
 
 const styles = StyleSheet.create({
     row: {
@@ -34,7 +35,8 @@ export default class ItemMng extends React.Component {
     this.state = {
         items:[],
         colors: [],
-        openways: []
+        openways: [],
+        showModel: false
     };
   }
 
@@ -87,6 +89,20 @@ export default class ItemMng extends React.Component {
     })
   }
 
+  addColor() {
+    let value = this.state.addColorValue
+    console.log("添加颜色", value)
+    if(!value || value.length < 1) {
+      WToast.show({data: '请输入颜色'})
+      return 
+    }
+    get('/api/manage/dict/color/add', {value}, res => {
+        this.setState({showModel: false})
+        WToast.show({data: '添加成功'})
+        this.loadDict()
+    })
+  }
+
   loadItems() {
     let productId = this.props.productId
     get('/api/product/item/list', {productId}, res => {
@@ -101,6 +117,17 @@ export default class ItemMng extends React.Component {
     let {items, colors, openways, color, openway} = this.state
     return (
       <View>
+        <Modal isVisible={this.state.showModel} backdropOpacity={0.5} style={{margin: 0, alignItems:'center', justifyContent: 'center'}} onBackdropPress={() => this.setState({ ModalIntroToggle: false })}>
+            <View style={{backgroundColor: 'white', justifyContent: 'center', width: 280, padding: 10}}>
+              <View style={styles.row}>
+                <TextInput onChangeText={text => this.setState({addColorValue: text})} style={{borderBottomColor: 'silver', borderBottomWidth: 1, width: 260, marginBottom: 10}} placeholder={'输入颜色'}/>
+              </View>
+              <View style={{...styles.row, justifyContent: 'space-between'}}>
+                <Button onPress={() => this.setState({showModel: false})} title={'取消'}/>
+                <Button onPress={() => this.addColor()} title={'添加'}/>
+              </View>
+            </View>
+        </Modal>
         <View>
             <Button title={'添加标准门'} onPress={() => {this.add()}}/>
         </View>
@@ -108,6 +135,7 @@ export default class ItemMng extends React.Component {
             <View style={styles.row}>
                 <Text>颜色：</Text>
                 <Selector items={colors} selected={color} onItemSelected={(color) => this.setState({color})}/>
+                <Button onPress={() => this.setState({showModel: true})} title={'添加颜色'}/>
             </View>
             <View style={styles.row}>
                 <Text>开向：</Text>
