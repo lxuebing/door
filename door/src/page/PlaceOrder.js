@@ -54,6 +54,12 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
   },
+  input: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'silver',
+    flex: 1,
+    margin: 10,
+  },
   tinyInput: {
       width: 150,
   },
@@ -175,7 +181,7 @@ class PlaceOrder extends React.Component {
 
   addOrder() {
     console.log("提交订单")
-    let {product, color, openway, custom, width, height, count, item} = this.state
+    let {product, color, openway, custom, width, height, count, note, item} = this.state
     if(!product) {
       WToast.show({data: '未选择商品'})
       return
@@ -193,7 +199,8 @@ class PlaceOrder extends React.Component {
               color: color.value,
               openway: openway.value,
               width,
-              height
+              height,
+              note
           }
       }
     } else {
@@ -272,6 +279,11 @@ class PlaceOrder extends React.Component {
           <View style={{...styles.row, padding: 10}}>
               <Text style={{fontSize: 16}}>数量：</Text>
               <TextInput style={styles.tinyInput} defaultValue={'' +count} onChangeText={(count) => this.setState({count})}></TextInput>
+          </View>
+          
+          <View style={{...styles.row, padding: 10}}>
+              <Text style={{fontSize: 16}}>备注：</Text>
+              <TextInput style={styles.input} multiline={true} placeholder={'备注'}  onChangeText={(note) => this.setState({note})}/>
           </View>
         </ScrollView>
         <View style={styles.operation}>

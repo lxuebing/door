@@ -189,6 +189,10 @@ class PlaceOrder extends React.Component {
           <Text style={styles.paramName}>下单时间：</Text>
           <Text style={styles.paramText}>{formatTime(order.createTime)}</Text>
         </View>
+        <View style={{...styles.row, ...styles.line}}>
+          <Text style={styles.paramName}>备注：</Text>
+          <Text style={styles.paramText}>{params.note}</Text>
+        </View>
       </View>
     );
   }
