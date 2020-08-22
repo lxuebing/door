@@ -3,6 +3,7 @@ import {StyleSheet, View, Image, Button, Text, TouchableHighlight} from 'react-n
 
 const styles = StyleSheet.create({
     selector: {
+        flex: 1,
         display: 'flex',
         flexDirection:'row',
         flexWrap: 'wrap'
@@ -18,7 +19,7 @@ const styles = StyleSheet.create({
     }
 });
   
-export default function Selector({onItemSelected, items, selected}) {
+export default function Selector({style, onItemSelected, onItemLongPress, items, selected}) {
 
     const getItemStyle = (item) => {
         if(selected && item.key === selected.key) {
@@ -33,10 +34,11 @@ export default function Selector({onItemSelected, items, selected}) {
     }
 
     return (
-        <View style={styles.selector}>
+        <View style={{...styles.selector, ...style}}>
             {
                 items && items.map((item, index) => (
-                    <TouchableHighlight key={index} onPress={() => onItemSelected && onItemSelected(item)}>
+                    <TouchableHighlight key={index} onPress={() => onItemSelected && onItemSelected(item)}
+                        onLongPress={() => onItemLongPress && onItemLongPress(item)}>
                         <Text style={getItemStyle(item)}>
                             {item.value}
                         </Text>

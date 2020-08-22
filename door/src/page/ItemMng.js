@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Image, Button, TextInput, Text, TouchableHighlight} from 'react-native';
+import {StyleSheet, View, Image, Button, TextInput, Text, Alert} from 'react-native';
 import Selector from './component/Selector'
 import {get, post} from '../api/request'
 import {buildParamsString} from '../utils/StringUtil'
@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     row: {
         display: 'flex',
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     item: {
         display: 'flex',
@@ -103,6 +103,22 @@ export default class ItemMng extends React.Component {
     })
   }
 
+  deleteColor(color) {
+    console.log("删除颜色", color)
+    Alert.alert('删除颜色', '确定要删除颜色“' + color.value + '”吗？',
+      [
+        {text:'取消', onPress: () => {}},
+        {text:'删除', onPress: () => {
+          get('/api/manage/dict/color/delete', {key: color.key}, res => {
+            console.log("删除颜色结果", res.data)
+            WToast.show({data: "已删除"})
+            this.loadDict()
+          })
+        }}
+      ]
+    )
+  }
+
   loadItems() {
     let productId = this.props.productId
     get('/api/product/item/list', {productId}, res => {
@@ -134,7 +150,8 @@ export default class ItemMng extends React.Component {
         <View style={styles.parms}>
             <View style={styles.row}>
                 <Text>颜色：</Text>
-                <Selector items={colors} selected={color} onItemSelected={(color) => this.setState({color})}/>
+                <Selector items={colors} selected={color} onItemSelected={(color) => this.setState({color})}
+                 onItemLongPress={(color) => this.deleteColor(color)}/>
                 <Button onPress={() => this.setState({showModel: true})} title={'添加颜色'}/>
             </View>
             <View style={styles.row}>
