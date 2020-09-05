@@ -26,6 +26,10 @@ const styles = StyleSheet.create({
     }, 
     itemText: {
         fontSize: 20
+    },
+    itemPrice: {
+      fontSize: 20,
+      color: 'red'
     }
 });
 
@@ -64,9 +68,10 @@ export default class ItemMng extends React.Component {
 
   add() {
     console.log("商品id", this.props.productId)
-    let {color, openway, width, height} = this.state
+    let {color, openway, width, height, price} = this.state
     let data = {
         productId: this.props.productId,
+        price,
         params: {
             color: color && color.value,
             openway: openway && openway.value,
@@ -164,6 +169,10 @@ export default class ItemMng extends React.Component {
                 <Text> - </Text>
                 <TextInput style={styles.tinyInput} placeholder={'输入高度(mm)'} onChangeText={(text) => this.setState({height: text})}></TextInput>
             </View>
+            <View style={styles.row}>
+                <Text>价格：</Text>
+                <TextInput style={styles.tinyInput} placeholder={'价格必须是数字'} onChangeText={(text) => this.setState({price: text})}></TextInput>
+            </View>
         </View>
         <View>
             {
@@ -171,6 +180,7 @@ export default class ItemMng extends React.Component {
                     return (
                         <View key={index} style={styles.item}>
                             <Text style={styles.itemText} >{buildParamsString(item.params)}</Text>
+                            <Text style={styles.itemPrice} >￥{item.price}</Text>
                             <Button title={'删除'} onPress={() => this.delete(item)}/>
                         </View>
                     )

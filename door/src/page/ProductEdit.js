@@ -195,7 +195,7 @@ class ProductEdit extends React.Component {
           <Button title={'保存'} onPress={() => this.save()} />
         </View>
         <View style={styles.row}>
-          <Text>单价：</Text>
+          <Text>参考价：</Text>
           <TextInput style={styles.input} defaultValue={product.price} onChangeText={price => this.changeState({price})}/>
         </View>
         <View style={styles.row}>

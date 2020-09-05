@@ -1,9 +1,10 @@
 import React from 'react';
-import {StyleSheet, View, ScrollView, Text, Image, Button, TouchableHighlight, Dimensions} from 'react-native';
+import {StyleSheet, View, TextInput, Text, Image, Button, TouchableHighlight, Dimensions} from 'react-native';
 import {formatTime} from '../utils/DateUtil'
-import {get} from '../api/request'
+import {get, post} from '../api/request'
 import RefreshListView, { RefreshState } from "react-native-refresh-list-view"
 import { WToast } from 'react-native-smart-tip';
+import Modal from "react-native-modal"
 
 const styles = StyleSheet.create({
   text: {
@@ -54,6 +55,7 @@ class OrderMng extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      showModel: false,
       refreshState: RefreshState.Idle,
       orderList: [
         
@@ -71,7 +73,35 @@ class OrderMng extends React.Component {
     console.log("向供应商订货", item)
     get('/api/manage/order/set', {orderId: item.id}, res => {
       console.log("发起供应商订单", res)
-      this.loadOrderList()
+      this.loadMore()
+    })
+  }
+
+  setOrderPrice(item) {
+    console.log("定制订单报价", item)
+    this.setState({
+      setPriceItem: item,
+      showModel: true
+    })
+  }
+
+  doSetOrderPrice() {
+    let {setPriceItem, setPriceValue} = this.state
+    if(!setPriceItem || !setPriceValue) {
+      WToast.show({data: '参数错误'})
+      this.setState({
+        showModel: false
+      })
+      return;
+    }
+    
+    post('/api/manage/order/price', {id: setPriceItem.id, price: setPriceValue}, res => {
+      console.log("订单报价", res.data)
+      WToast.show({data: '报价成功'})
+      this.loadMore()
+      this.setState({
+        showModel: false
+      })
     })
   }
 
@@ -150,7 +180,7 @@ class OrderMng extends React.Component {
           <View style={styles.productDetail}>
             <Text style={styles.productName}>{item.productName}</Text>
             <View style={{...styles.row, flex: 1}}>
-              <Text style={styles.productPrice}>￥{item.price}</Text>
+              <Text style={styles.productPrice}>{item.price && item.price.length > 0 ? '￥' + item.price : '待报价'}</Text>
               <Text>数量：{item.count}</Text>
               <Text>{formatTime(item.createTime)}</Text>
             </View>
@@ -163,6 +193,9 @@ class OrderMng extends React.Component {
             <View style={styles.row}>
               {this.getCustomType(item)}
               {this.getStatus(item)}
+              { item.tradeStatus === 0 && item.custom === 1 &&
+                <Button title="报价" onPress={() => this.setOrderPrice(item)}/>
+              }
               { item.status === 1 &&
                 <Button title="订货" onPress={() => this.setOrder(item)}/>
               }
@@ -176,13 +209,26 @@ class OrderMng extends React.Component {
   render() {
     let {orderList, refreshState} = this.state
     return (
-      <RefreshListView data={orderList} 
-        refreshState={refreshState} 
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({item}) => this.renderCell(item)}
-        onHeaderRefresh={() => this.onHeaderRefresh()}
-        onFooterRefresh={() => this.onFooterRefresh()}
-        />
+      <View>
+        <Modal isVisible={this.state.showModel} backdropOpacity={0.5} style={{margin: 0, alignItems:'center', justifyContent: 'center'}} onBackdropPress={() => this.setState({ ModalIntroToggle: false })}>
+            <View style={{backgroundColor: 'white', justifyContent: 'center', width: 280, padding: 10}}>
+              <View style={styles.row}>
+                <TextInput onChangeText={text => this.setState({setPriceValue: text})} style={{borderBottomColor: 'silver', borderBottomWidth: 1, width: 260, marginBottom: 10}} placeholder={'填写价格，必须是数字'}/>
+              </View>
+              <View style={{...styles.row, justifyContent: 'space-between'}}>
+                <Button onPress={() => this.setState({showModel: false})} title={'取消'}/>
+                <Button onPress={() => this.doSetOrderPrice()} title={'报价'}/>
+              </View>
+            </View>
+        </Modal>
+        <RefreshListView data={orderList} 
+          refreshState={refreshState} 
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({item}) => this.renderCell(item)}
+          onHeaderRefresh={() => this.onHeaderRefresh()}
+          onFooterRefresh={() => this.onFooterRefresh()}
+          />
+      </View>
     )
     
   }

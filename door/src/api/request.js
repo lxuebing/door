@@ -15,10 +15,10 @@ const AUTH_PATH = [
 ]
 
 function shouldFilter(url) {
-    for(let i in AUTH_PATH) {
-        if(url.startsWith(AUTH_PATH[i])) return true
-    }
-    return false
+    // for(let i in AUTH_PATH) {
+    //     if(url.startsWith(AUTH_PATH[i])) return true
+    // }
+    return true
 }
 
 function doRequest({ url, method, headers, data, callback, fail}) {

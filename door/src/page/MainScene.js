@@ -9,7 +9,7 @@ export default class MainScene extends React.Component {
   constructor(props){
       super(props);
       this.state = {
-          mode: 1
+          mode: 2
       };
   }
 

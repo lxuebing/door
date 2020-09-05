@@ -12,6 +12,8 @@ import cartIcon from '../images/icons/cart.png';
 import cartSelectedIcon from '../images/icons/cartSelected.png';
 import userIcon from '../images/icons/user.png';
 import userSelectedIcon from '../images/icons/userSelected.png';
+import verifyIcon from '../images/icons/verify.png';
+import verifySelectedIcon from '../images/icons/verifySelected.png';
 
 import ProductMng from './ProductMng';
 import CategoryMng from './CategoryMng';
@@ -19,6 +21,9 @@ import OrderMng from './OrderMng';
 import UserMng from './UserMng';
 import ProductEdit from './ProductEdit';
 import OrderDetail from './OrderDetail';
+import CustomerMng from './CustomerMng';
+import AuditDetail from './AuditDetail';
+import ImageShow from './ImageShow';
 import Login from './Login';
 
 const styles = StyleSheet.create({
@@ -48,6 +53,8 @@ function ManageTab({navigation}) {
             iconName = focused ? categorySelectedIcon : categoryIcon;
           } else if (route.name === 'OrderMng') {
             iconName = focused ? cartSelectedIcon : cartIcon;
+          } else if (route.name === 'CustomerMng') {
+            iconName = focused ? verifySelectedIcon : verifyIcon;
           } else if (route.name === 'UserMng') {
             iconName = focused ? userSelectedIcon : userIcon;
           }
@@ -69,6 +76,7 @@ function ManageTab({navigation}) {
       }}/>
       <Tab.Screen name="CategoryMng" component={CategoryMng} options={{title:'品类管理'}}/>
       <Tab.Screen name="OrderMng" component={OrderMng} options={{title:'订单管理'}}/>
+      <Tab.Screen name="CustomerMng" component={CustomerMng} options={{title:'入驻审核'}}/>
       <Tab.Screen name="UserMng" component={UserMng} options={{title:'我的'}}/>
     </Tab.Navigator>
   )
@@ -98,6 +106,8 @@ export default class ManageScene extends React.Component {
             <Stack.Screen name="ManageTab" component={ManageTab} options={{title:'门业帮管理系统'}}/>
             <Stack.Screen name="ProductEdit" component={ProductEdit} options={{title:'商品编辑'}}/>
             <Stack.Screen name="OrderDetail" component={OrderDetail} options={{title:'订单详情'}}/>
+            <Stack.Screen name="AuditDetail" component={AuditDetail} options={{title:'入驻申请'}}/>
+            <Stack.Screen name="ImageShow" component={ImageShow} options={{title:'查看图片'}}/>
             <Stack.Screen name="Login" component={Login} options={{title:'登录'}}/>
           </Stack.Navigator>
         </NavigationContainer> 
