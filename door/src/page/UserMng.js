@@ -1,7 +1,6 @@
 import React from 'react';
 import {DeviceEventEmitter, StyleSheet, View, Image, Button, ImageBackground, Text, TouchableHighlight} from 'react-native';
-import avatar from '../images/icons/user.png'
-import login from '../images/icons/login.png'
+import avatar from '../images/icons/user.png';
 import {removeToken} from '../api/storage'
 import axios from 'axios';
 import { storage } from '../api/storage';
@@ -115,16 +114,16 @@ class User extends React.Component {
 
   logout() {
     removeToken()
-    this.setState({userInfo:{}})
+    this.setState({userInfo: {}})
     this.props.navigation.navigate('Login')
   }
-
+  
   componentDidMount() {
     this.props.navigation.addListener('focus', () => {
       this.getProfile()
     })
   }
-
+  
   componentWillUnmount() {
     this.setState = ()=>false;
   }
@@ -143,9 +142,9 @@ class User extends React.Component {
               userInfo && userInfo.role == 10 &&
               <>
               <View style={styles.mode}>
-                <Text style={{color: "black", fontSize: 16, fontWeight: 'bold'}}>客户模式</Text>
+                <Text style={{color: "black", fontSize: 16, fontWeight: 'bold'}}>管理模式</Text>
                 <TouchableHighlight onPress={ (e) => this.switchMode() }>
-                  <Text style={styles.linkButton} >切换至管理模式</Text>
+                  <Text style={styles.linkButton} >切换至客户模式</Text>
                 </TouchableHighlight>
               </View>
               </>
@@ -165,5 +164,7 @@ class User extends React.Component {
     );
   }
 }
+
+User.propTypes = {};
 
 export default User;

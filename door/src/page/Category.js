@@ -1,10 +1,17 @@
 import React from 'react';
-import {StyleSheet, View, Text, Image, TouchableHighlight, Dimensions} from 'react-native';
-import homePicture from '../images/icons/home.png';
+import {StyleSheet, View, ScrollView, Text, Image, TouchableHighlight, Dimensions} from 'react-native';
+import {get} from '../api/request'
 
 const styles = StyleSheet.create({
-  text: {
-    color: 'red',
+  cateName: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16
+  },
+  cateNameSelected: {
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: 16
   },
   container: {
     height: Dimensions.get('window').height,
@@ -12,14 +19,14 @@ const styles = StyleSheet.create({
   },
   sidebar: {
     height: Dimensions.get('window').height,
-    backgroundColor: 'silver',
-    width: 150
+    backgroundColor: '#1296DB',
+    width: 120
   },
   content: {
     flex:1,
-    borderColor: 'blue',
     flexDirection: 'row',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    backgroundColor: '#F2F2F2'
   },
   img: {
     height: 60,
@@ -28,7 +35,15 @@ const styles = StyleSheet.create({
   listItem: {
     padding: 10,
     justifyContent:"center",
-    alignItems:"center"
+    alignItems:"center",
+    borderColor: '#0785C0',
+    borderBottomWidth: 1
+  },
+  listItemSelected: {
+    padding: 10,
+    justifyContent:"center",
+    alignItems:"center",
+    backgroundColor: '#F2F2F2'
   },
   categoryItem: {
     padding: 20,
@@ -43,101 +58,80 @@ class Category extends React.Component {
       firstCates: [
       ],
       secondCates: [
-        {
-          id: 1,
-          name: "品类1",
-          shortcut: "",
-        },
-        {
-          id: 2,
-          name: "品类2",
-          shortcut: "",
-        },
-        {
-          id: 3,
-          name: "品类3",
-          shortcut: "",
-        },
-        {
-          id: 4,
-          name: "品类4",
-          shortcut: "",
-        },
-        {
-          id: 5,
-          name: "品类5",
-          shortcut: "",
-        },
-        {
-          id: 6,
-          name: "品类6",
-          shortcut: "",
-        }
       ]
     };
   }
 
-  onFirstCateClicked(cate) {
-    console.log("1级品类: " + cate.id + cate.name)
-    // todo: 点击一级品类加载该品类下的二级品类
-  }
-
   onSecondCateClicked(cate) {
     console.log("2级品类: " + cate.name)
-    // todo: 点击二级品类跳转至商品列表页
+    console.log("导航",this.props.navigation)
+    this.props.navigation.navigate('ProductList', {category: cate.id})
   }
 
-  loadSecondCateList(cateId) {
-    // todo: 加载二级品类
+  loadSecondCateList(cate) {
+    console.log("1级品类: " + cate.id + cate.name)
+    get('/api/category/list', {root: cate.id}, res => {
+      console.log("加载二级品类", res)
+      let cates = res.data
+      this.setState({
+        secondCates: cates
+      })
+      
+    })
+  }
+
+  onFirstCateSelected(cate) {
+    this.setState({
+      selected: cate
+    })
+    this.loadSecondCateList(cate)
   }
 
   componentDidMount() {
-    fetch('http://mockjs.docway.net/mock/1WpkXqZLoSf/api/category/list?root=0')
-      .then((response) => {
-        return response.json()
+    get('/api/category/list', {root: 0}, res => {
+      console.log("一级品类", res)
+      let cates = res.data
+      this.setState({
+        firstCates: cates
       })
-      .then((res) => {
-        console.log("一级品类", res)
-        if(res.code === 1) {
-          let cates = res.data
-          this.setState({
-            firstCates: cates
-          })
-          if(cates && cates.length > 0) this.loadSecondCateList(cates[0].id)
-        } else {
-          // todo: token错误提示
-        }
-      })
-      .catch((error) => {
-        console.log(222, error)
-      })
+      if(cates && cates.length > 0) {
+        this.setState({selected: cates[0]})
+        this.loadSecondCateList(cates[0])
+      }
+    })
+  }
+  
+  componentWillUnmount() {
+    this.setState = ()=>false;
   }
 
   render() {
-    let {firstCates,secondCates} = this.state
+    let {firstCates, secondCates, selected} = this.state
     return (
       <View style={styles.container}>
         <View style={styles.sidebar}>
           {  firstCates && firstCates.map((cate,index) => (
-            <TouchableHighlight key={index} onPress = { (e) => this.onFirstCateClicked(cate) }>
-              <View style={styles.listItem}>
-                <Text style={styles.text}>{cate.name}</Text>
+            <TouchableHighlight key={index} onPress = { (e) => this.onFirstCateSelected(cate) }>
+              <View style={cate === selected ? styles.listItemSelected: styles.listItem}>
+                <Text style={cate === selected ? styles.cateNameSelected:styles.cateName}>{cate.name}</Text>
               </View>
             </TouchableHighlight>
           ))}
         </View>
         
-        <View style={styles.content}>
-          {  secondCates && secondCates.map((cate,index) => (
-            <TouchableHighlight key={index} onPress = { (e) => this.onSecondCateClicked(cate) }>
-              <View style={styles.categoryItem}>
-                <Image source={homePicture} style={styles.img} />
-                <Text style={styles.text}>{cate.name}</Text>
-              </View>
-            </TouchableHighlight>
-          ))}
-          
-        </View>
+        <ScrollView>
+          <View style={styles.content}>
+            {  secondCates && secondCates.map((cate,index) => (
+              <TouchableHighlight key={index} onPress = { (e) => this.onSecondCateClicked(cate) }>
+                <View style={styles.categoryItem}>
+                  <Image source={{uri:cate.shortcut}} style={styles.img} />
+                  <Text>{cate.name}</Text>
+                </View>
+              </TouchableHighlight>
+            ))}
+            
+          </View>
+        </ScrollView>
       </View>
     );
   }
